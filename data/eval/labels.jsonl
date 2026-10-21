@@ -1,0 +1,25 @@
+{"regulation": "reg-01-data-protection", "requirement": "R1", "relevant": ["data-privacy§5.1"], "acceptable": ["info-security§5.1", "data-privacy§5.2"], "impact": "conflict"}
+{"regulation": "reg-01-data-protection", "requirement": "R2", "relevant": ["data-privacy§3.2"], "acceptable": ["data-privacy§3.3", "kyc-aml§6.1"], "impact": "conflict"}
+{"regulation": "reg-01-data-protection", "requirement": "R3", "relevant": ["data-privacy§4.1"], "acceptable": [], "impact": "conflict"}
+{"regulation": "reg-01-data-protection", "requirement": "R4", "relevant": ["data-privacy§2.1", "data-privacy§2.2"], "acceptable": [], "impact": "conflict"}
+{"regulation": "reg-01-data-protection", "requirement": "R5", "relevant": ["data-privacy§6.1"], "acceptable": [], "impact": "conflict"}
+{"regulation": "reg-02-kyc-update", "requirement": "R1", "relevant": ["kyc-aml§3.1"], "acceptable": ["kyc-aml§3.2"], "impact": "conflict"}
+{"regulation": "reg-02-kyc-update", "requirement": "R2", "relevant": ["kyc-aml§2.2"], "acceptable": ["kyc-aml§6.1"], "impact": "conflict"}
+{"regulation": "reg-02-kyc-update", "requirement": "R3", "relevant": ["kyc-aml§4.1"], "acceptable": ["kyc-aml§4.2"], "impact": "conflict"}
+{"regulation": "reg-02-kyc-update", "requirement": "R4", "relevant": ["kyc-aml§5.1"], "acceptable": [], "impact": "aligned"}
+{"regulation": "reg-03-cyber-resilience", "requirement": "R1", "relevant": ["info-security§2.1"], "acceptable": ["info-security§4.2"], "impact": "conflict"}
+{"regulation": "reg-03-cyber-resilience", "requirement": "R2", "relevant": ["info-security§5.2"], "acceptable": [], "impact": "conflict"}
+{"regulation": "reg-03-cyber-resilience", "requirement": "R3", "relevant": ["info-security§5.1"], "acceptable": ["data-privacy§5.1"], "impact": "conflict"}
+{"regulation": "reg-03-cyber-resilience", "requirement": "R4", "relevant": ["info-security§4.1", "info-security§4.2"], "acceptable": [], "impact": "conflict"}
+{"regulation": "reg-03-cyber-resilience", "requirement": "R5", "relevant": ["info-security§6.1"], "acceptable": [], "impact": "conflict"}
+{"regulation": "reg-04-card-tokenisation", "requirement": "R1", "relevant": ["info-security§3.2"], "acceptable": [], "impact": "conflict"}
+{"regulation": "reg-04-card-tokenisation", "requirement": "R2", "relevant": ["info-security§3.2"], "acceptable": ["data-privacy§2.1"], "impact": "gap"}
+{"regulation": "reg-04-card-tokenisation", "requirement": "R3", "relevant": ["info-security§2.2"], "acceptable": [], "impact": "conflict"}
+{"regulation": "reg-05-failed-transactions", "requirement": "R1", "relevant": ["customer-grievance§4.1"], "acceptable": [], "impact": "conflict"}
+{"regulation": "reg-05-failed-transactions", "requirement": "R2", "relevant": ["customer-grievance§4.2"], "acceptable": [], "impact": "conflict"}
+{"regulation": "reg-05-failed-transactions", "requirement": "R3", "relevant": ["customer-grievance§2.2"], "acceptable": ["customer-grievance§2.1"], "impact": "conflict"}
+{"regulation": "reg-05-failed-transactions", "requirement": "R4", "relevant": ["customer-grievance§5.1"], "acceptable": ["customer-grievance§3.1", "customer-grievance§3.2"], "impact": "conflict"}
+{"regulation": "reg-06-digital-payment-safety", "requirement": "R1", "relevant": ["payments-ops§3.3"], "acceptable": ["payments-ops§3.2"], "impact": "conflict"}
+{"regulation": "reg-06-digital-payment-safety", "requirement": "R2", "relevant": ["payments-ops§4.1"], "acceptable": [], "impact": "conflict"}
+{"regulation": "reg-06-digital-payment-safety", "requirement": "R3", "relevant": ["payments-ops§5.1"], "acceptable": [], "impact": "conflict"}
+{"regulation": "reg-06-digital-payment-safety", "requirement": "R4", "relevant": ["payments-ops§3.1"], "acceptable": ["kyc-aml§5.2"], "impact": "conflict"}

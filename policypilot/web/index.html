@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PolicyPilot — Regulatory Change Assistant</title>
+  <meta name="description" content="PolicyPilot finds the company policies a new regulation affects, drafts the changes, and verifies every quote.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/styles.css?v=0.3.4">
+</head>
+<body>
+<div class="app">
+
+  <!-- ============================================================ SIDEBAR -->
+  <aside class="sidebar" aria-label="Main navigation">
+    <a class="logo" href="#/overview">
+      <span class="logo-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M12 2.5 4 5.8v5.6c0 4.9 3.4 9.2 8 10.1 4.6-.9 8-5.2 8-10.1V5.8L12 2.5Z" fill="currentColor" opacity=".18"/><path d="M12 2.5 4 5.8v5.6c0 4.9 3.4 9.2 8 10.1 4.6-.9 8-5.2 8-10.1V5.8L12 2.5Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="m8.5 12.2 2.4 2.4 4.6-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+      <span class="logo-text">PolicyPilot<small>Regulatory change assistant</small></span>
+    </a>
+
+    <nav class="nav">
+      <a href="#/overview" data-view="overview"><span data-icon="home"></span><span>Overview</span></a>
+      <a href="#/analyze" data-view="analyze"><span data-icon="play"></span><span>New analysis</span></a>
+      <a href="#/report" data-view="report"><span data-icon="file"></span><span>Report</span><span class="nav-badge" id="nav-report-badge" hidden></span></a>
+      <div class="nav-sep">Explore</div>
+      <a href="#/library" data-view="library"><span data-icon="book"></span><span>Policy library</span></a>
+      <a href="#/search" data-view="search"><span data-icon="search"></span><span>Search playground</span></a>
+      <div class="nav-sep">Support</div>
+      <a href="#/help" data-view="help"><span data-icon="help"></span><span>How to use</span></a>
+    </nav>
+
+    <div class="mode-card" id="mode-card">
+      <div class="mode-row"><span class="dot"></span><b id="mode-title">Connecting…</b></div>
+      <p id="mode-text">Checking the server.</p>
+      <a href="#/help/modes" class="mode-link">What does this mean?</a>
+    </div>
+  </aside>
+
+  <!-- ============================================================ MAIN -->
+  <main class="main" id="main">
+
+    <!-- ---------------------------------------------------------- OVERVIEW -->
+    <section class="view" id="view-overview" data-title="Overview">
+      <div class="hero">
+        <div class="hero-copy">
+          <span class="eyebrow">Regulatory change management</span>
+          <h1>Know exactly which policies a new regulation affects — in minutes, not weeks.</h1>
+          <p class="lead">PolicyPilot reads a new regulation, finds every clause in your company policies that it touches,
+            explains the impact in plain English and drafts the updated wording. Every quote it relies on is checked
+            word-for-word against the source, and nothing changes until a person approves it.</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary btn-lg" href="#/analyze"><span data-icon="play"></span>Start an analysis</a>
+            <a class="btn btn-ghost btn-lg" href="#/help">How to use</a>
+          </div>
+        </div>
+        <div class="hero-card" aria-hidden="true">
+          <div class="mock-head"><span class="pill pill-red">Needs change</span><span class="mock-verified"><span data-icon="check"></span>Evidence verified</span></div>
+          <div class="mock-title">Data Privacy Policy · 3.2 Data Retention</div>
+          <div class="mock-label">New rule says</div>
+          <div class="mock-quote">“Personal data shall not be kept for longer than three (3) years…”</div>
+          <div class="mock-grid">
+            <div><div class="mock-label">Policy today</div><p>Retained for <del>ten (10) years</del> after the account is closed.</p></div>
+            <div><div class="mock-label">Suggested</div><p>Retained for <ins>no longer than three (3) years</ins> after the account is closed.</p></div>
+          </div>
+          <div class="mock-actions"><span class="btn btn-sm btn-success">Approve</span><span class="btn btn-sm btn-ghost">Reject</span></div>
+        </div>
+      </div>
+
+      <div class="stat-strip" id="overview-stats">
+        <div><b id="ov-policies">–</b><span>policies in the library</span></div>
+        <div><b id="ov-clauses">–</b><span>clauses indexed</span></div>
+        <div><b id="ov-regs">–</b><span>sample regulations ready</span></div>
+        <div><b>100%</b><span>of quotes fact-checked</span></div>
+      </div>
+
+      <h2 class="section-title">How it works</h2>
+      <ol class="process">
+        <li><span class="process-icon" data-icon="file"></span><b>1. Read the rule</b><p>The new regulation is split into its individual requirements (R1, R2, …).</p></li>
+        <li><span class="process-icon" data-icon="search"></span><b>2. Find affected clauses</b><p>Each requirement is matched against every policy clause — by exact words and by meaning.</p></li>
+        <li><span class="process-icon" data-icon="spark"></span><b>3. Assess &amp; draft</b><p>Each match is classified and new wording is drafted where something must change.</p></li>
+        <li><span class="process-icon" data-icon="shield"></span><b>4. Verify the evidence</b><p>Every quote is checked against the original text. Anything unproven is sent back or flagged.</p></li>
+        <li><span class="process-icon" data-icon="user"></span><b>5. You decide</b><p>Review each change side by side, then approve or reject it and export the report.</p></li>
+      </ol>
+
+      <h2 class="section-title">What the results mean</h2>
+      <div class="legend-grid">
+        <div class="legend-card red"><span class="pill pill-red">Needs change</span><p>The policy says something the new rule no longer allows — e.g. it keeps data for 10 years, but the rule now says 3.</p></div>
+        <div class="legend-card amber"><span class="pill pill-amber">Missing from policy</span><p>The rule requires something the policy doesn't mention at all, so a new clause or sentence is needed.</p></div>
+        <div class="legend-card green"><span class="pill pill-green">Already compliant</span><p>The policy already meets the rule. Shown so reviewers can see it was checked.</p></div>
+      </div>
+    </section>
+
+    <!-- ---------------------------------------------------------- NEW ANALYSIS -->
+    <section class="view" id="view-analyze" data-title="New analysis" hidden>
+      <header class="page-head">
+        <div>
+          <h1>New analysis</h1>
+          <p>Choose a regulation and PolicyPilot will check it against every policy in your library.</p>
+        </div>
+      </header>
+
+      <ol class="stepper" id="stepper">
+        <li data-step="1" class="current"><span class="step-dot">1</span><span>Choose a regulation</span></li>
+        <li data-step="2"><span class="step-dot">2</span><span>Analyse</span></li>
+        <li data-step="3"><span class="step-dot">3</span><span>Review the report</span></li>
+      </ol>
+
+      <!-- step 1 -->
+      <div id="step-choose" class="choose">
+        <div class="card">
+          <div class="card-head">
+            <h3>Which regulation do you want to check?</h3>
+            <div class="segmented" role="tablist">
+              <button class="on" data-source="samples" role="tab">Sample regulations</button>
+              <button data-source="paste" role="tab">Paste your own</button>
+            </div>
+          </div>
+          <div id="source-samples">
+            <div class="reg-table" id="reg-list" role="listbox" aria-label="Sample regulations"></div>
+          </div>
+          <div id="source-paste" hidden>
+            <label class="field-label" for="reg-text">Regulation text</label>
+            <textarea id="reg-text" rows="12" placeholder="Paste the regulation here.
+
+Tip: numbered requirements work best, for example:
+R1. Logs shall be retained for 180 days.
+R2. Incidents shall be reported within 6 hours."></textarea>
+            <p class="field-help">Don't have numbering? That's fine — each paragraph will be treated as one requirement.</p>
+          </div>
+        </div>
+
+        <aside class="card preview" id="reg-preview">
+          <div class="preview-empty">
+            <span data-icon="file" class="big-icon"></span>
+            <p>Select a regulation to see what it covers.</p>
+          </div>
+        </aside>
+      </div>
+
+      <div class="action-bar" id="action-bar">
+        <p id="action-hint">Select a regulation to continue.</p>
+        <button class="btn btn-primary btn-lg" id="run-btn" disabled><span data-icon="play"></span>Run analysis</button>
+      </div>
+
+      <!-- step 2 -->
+      <div id="step-run" class="card run-card" hidden>
+        <div class="run-head">
+          <div>
+            <h3 id="run-title">Analysing…</h3>
+            <p class="muted" id="run-sub">This usually takes under a minute.</p>
+          </div>
+          <span class="timer" id="run-timer">0:00</span>
+        </div>
+        <ol class="stages" id="stages">
+          <li data-stage="read"><span class="stage-dot"></span><div><b>Reading the regulation</b><p>Splitting it into individual requirements</p></div></li>
+          <li data-stage="search"><span class="stage-dot"></span><div><b>Searching your policies</b><p id="stage-search-detail">Finding clauses that relate to each requirement</p></div></li>
+          <li data-stage="draft"><span class="stage-dot"></span><div><b>Assessing impact &amp; drafting changes</b><p>Deciding what each clause needs</p></div></li>
+          <li data-stage="verify"><span class="stage-dot"></span><div><b>Verifying every quote</b><p id="stage-verify-detail">Checking the evidence word-for-word</p></div></li>
+          <li data-stage="done"><span class="stage-dot"></span><div><b>Report ready</b><p>Opening your results</p></div></li>
+        </ol>
+        <details class="tech-log">
+          <summary>Show technical log <span class="muted" id="log-count"></span></summary>
+          <ol id="trace" class="trace"></ol>
+        </details>
+      </div>
+    </section>
+
+    <!-- ---------------------------------------------------------- REPORT -->
+    <section class="view" id="view-report" data-title="Report" hidden>
+      <div id="report-empty" class="empty-state">
+        <span data-icon="file" class="big-icon"></span>
+        <h2>No report yet</h2>
+        <p>Run an analysis and your results will appear here: every affected clause, the evidence behind it, and suggested new wording.</p>
+        <a class="btn btn-primary" href="#/analyze">Start an analysis</a>
+      </div>
+      <div id="report" hidden></div>
+    </section>
+
+    <!-- ---------------------------------------------------------- LIBRARY -->
+    <section class="view" id="view-library" data-title="Policy library" hidden>
+      <header class="page-head">
+        <div>
+          <h1>Policy library</h1>
+          <p>The company policies PolicyPilot checks against, broken into numbered clauses.</p>
+        </div>
+        <label class="btn btn-primary">
+          <input type="file" id="upload" accept=".md,.txt,.pdf" hidden>
+          <span data-icon="upload"></span>Upload a policy
+        </label>
+      </header>
+      <div class="toolbar">
+        <div class="input-icon"><span data-icon="search"></span><input type="search" id="library-filter" placeholder="Filter clauses, e.g. retention"></div>
+        <span class="muted" id="library-meta"></span>
+      </div>
+      <div id="policies" class="policy-list"></div>
+    </section>
+
+    <!-- ---------------------------------------------------------- SEARCH -->
+    <section class="view" id="view-search" data-title="Search playground" hidden>
+      <header class="page-head">
+        <div>
+          <h1>Search playground</h1>
+          <p>See the search step on its own. Type any question and compare how the different search methods rank the policy clauses.</p>
+        </div>
+      </header>
+      <div class="card">
+        <form id="search-form" class="search-form">
+          <div class="input-icon grow"><span data-icon="search"></span><input id="search-q" type="search" placeholder="e.g. How long do we keep customer data?" required></div>
+          <select id="search-method" aria-label="Search method">
+            <option value="best">Best (combined + re-ranked)</option>
+            <option value="hybrid">Combined (words + meaning)</option>
+            <option value="bm25">Exact words only</option>
+            <option value="dense">Meaning only</option>
+          </select>
+          <button class="btn btn-primary">Search</button>
+        </form>
+        <div class="chips" id="search-examples">
+          <span class="muted">Try:</span>
+          <button type="button" class="chip">How long do we keep customer data?</button>
+          <button type="button" class="chip">storing card numbers</button>
+          <button type="button" class="chip">deadline to report a cyber attack</button>
+        </div>
+      </div>
+      <div id="search-results"></div>
+    </section>
+
+    <!-- ---------------------------------------------------------- HOW TO USE -->
+    <section class="view" id="view-help" data-title="How to use" hidden>
+      <header class="page-head">
+        <div>
+          <h1>How to use PolicyPilot</h1>
+          <p>A five-minute guide. No technical knowledge needed.</p>
+        </div>
+      </header>
+
+      <div class="help-layout">
+        <nav class="help-toc" aria-label="On this page">
+          <b>On this page</b>
+          <a href="#/help/start">Quick start</a>
+          <a href="#/help/results">Reading your report</a>
+          <a href="#/help/review">Reviewing &amp; exporting</a>
+          <a href="#/help/library">Using your own documents</a>
+          <a href="#/help/modes">Demo mode vs AI mode</a>
+          <a href="#/help/faq">Questions</a>
+        </nav>
+
+        <div class="help-body">
+          <article class="help-section" id="help-start">
+            <h2>Quick start</h2>
+            <p>Your first report takes about a minute.</p>
+            <ol class="guide-steps">
+              <li>
+                <span class="guide-num">1</span>
+                <div><h4>Open <a href="#/analyze">New analysis</a></h4>
+                  <p>Use the menu on the left. You'll see a list of sample regulations from a fictional regulator.</p></div>
+              </li>
+              <li>
+                <span class="guide-num">2</span>
+                <div><h4>Pick a regulation</h4>
+                  <p>Click any row. A preview on the right lists the requirements it contains, so you know what will be checked.
+                  To use your own text, switch to <b>Paste your own</b>.</p></div>
+              </li>
+              <li>
+                <span class="guide-num">3</span>
+                <div><h4>Click <b>Run analysis</b></h4>
+                  <p>A progress panel shows each stage as it happens: reading, searching, assessing, verifying.
+                  You don't need to do anything while it runs.</p></div>
+              </li>
+              <li>
+                <span class="guide-num">4</span>
+                <div><h4>Review the report</h4>
+                  <p>It opens automatically. Start with the summary at the top, then work through each requirement and approve or reject the suggested changes.</p></div>
+              </li>
+            </ol>
+            <a class="btn btn-primary" href="#/analyze">Try it now</a>
+          </article>
+
+          <article class="help-section" id="help-results">
+            <h2>Reading your report</h2>
+            <p>The report is organised by <b>requirement</b> — each rule in the new regulation. Under each one you'll find the policy clauses it affects.</p>
+            <div class="anatomy">
+              <div class="anatomy-card">
+                <div class="mock-head"><span class="pill pill-red">Needs change</span><span class="mock-verified"><span data-icon="check"></span>Evidence verified</span></div>
+                <div class="mock-title">Data Privacy Policy · 3.2 Data Retention</div>
+                <div class="mock-label">Why it matters</div>
+                <p class="small">The policy keeps data for ten years; the new rule caps it at three.</p>
+                <div class="mock-label">New rule says</div>
+                <div class="mock-quote">“shall not be kept for longer than three (3) years”</div>
+              </div>
+              <ol class="anatomy-notes">
+                <li><b>Status label</b> — what kind of change is needed (see below).</li>
+                <li><b>Evidence badge</b> — <span class="text-green">Evidence verified</span> means every quote was found word-for-word in the original documents. <span class="text-amber">Check manually</span> means the system couldn't prove a quote, so read the source yourself.</li>
+                <li><b>Clause</b> — which policy and which numbered section is affected.</li>
+                <li><b>Why it matters</b> — a plain-English explanation.</li>
+                <li><b>Side-by-side</b> — today's wording next to the suggested wording. <ins>Green</ins> is added text, <del>red strike-through</del> is removed text, <mark>highlighted</mark> text is the part quoted as evidence.</li>
+              </ol>
+            </div>
+            <h3>The three status labels</h3>
+            <table class="table">
+              <thead><tr><th>Label</th><th>Meaning</th><th>What to do</th></tr></thead>
+              <tbody>
+                <tr><td><span class="pill pill-red">Needs change</span></td><td>The policy contradicts the new rule.</td><td>Review the suggested wording and approve or edit it.</td></tr>
+                <tr><td><span class="pill pill-amber">Missing from policy</span></td><td>The rule asks for something the policy doesn't cover.</td><td>Approve the new text, or decide where it belongs.</td></tr>
+                <tr><td><span class="pill pill-green">Already compliant</span></td><td>The policy already meets the rule.</td><td>Nothing — approve to record that it was checked.</td></tr>
+              </tbody>
+            </table>
+          </article>
+
+          <article class="help-section" id="help-review">
+            <h2>Reviewing &amp; exporting</h2>
+            <ul class="check-list">
+              <li><b>Approve</b> or <b>Reject</b> each suggestion. Click the same button again to undo. Decisions are saved automatically.</li>
+              <li>The <b>review progress</b> bar at the top of the report shows how many items are left.</li>
+              <li>Use the <b>filters</b> (All, Needs change, Missing, Compliant, Check manually) to focus on what matters first.</li>
+              <li><b>Export</b> downloads the full report — summary, findings, evidence and your decisions — as a document you can share or attach to an email.</li>
+            </ul>
+          </article>
+
+          <article class="help-section" id="help-library">
+            <h2>Using your own documents</h2>
+            <p><b>Policies:</b> go to <a href="#/library">Policy library</a> and click <b>Upload a policy</b>. Word-processed policies saved as
+              <code>.pdf</code>, <code>.txt</code> or <code>.md</code> all work. Numbered headings such as “3.2 Data Retention” give the best results,
+              because each numbered section becomes one clause that can be cited.</p>
+            <p><b>Regulations:</b> on <a href="#/analyze">New analysis</a>, choose <b>Paste your own</b> and paste the text.</p>
+            <div class="callout"><span data-icon="info"></span><p>Documents stay on the computer running PolicyPilot. In AI mode, the regulation and the relevant clauses are sent to the AI provider to be analysed.</p></div>
+          </article>
+
+          <article class="help-section" id="help-modes">
+            <h2>Demo mode vs AI mode</h2>
+            <div class="compare-modes">
+              <div class="card">
+                <span class="pill pill-amber">Demo mode</span>
+                <p>Runs when no AI key is set up. Uses the same search and fact-checking, but a simple rule-based assessment instead of AI.
+                  Good for trying the product. Status labels and suggested wording are rough.</p>
+              </div>
+              <div class="card">
+                <span class="pill pill-green">AI mode</span>
+                <p>An AI model reads each clause, decides what needs to change, explains why, and drafts proper new wording.
+                  Its quotes are still fact-checked, and it must fix any that fail.</p>
+              </div>
+            </div>
+            <p><b>To switch on AI mode</b> (for whoever set PolicyPilot up): create a file called <code>.env</code> in the project folder with one of:</p>
+            <ul class="check-list">
+              <li><b>Groq</b> (has a free tier): <code>PP_PROVIDER=groq</code> and <code>GROQ_API_KEY=your-key</code></li>
+              <li><b>Claude</b>: <code>PP_PROVIDER=claude</code> and <code>ANTHROPIC_API_KEY=your-key</code></li>
+            </ul>
+            <p style="margin-top:10px">Then restart the app. The status card in the menu turns green and shows which model is running.</p>
+          </article>
+
+          <article class="help-section" id="help-faq">
+            <h2>Questions</h2>
+            <details class="faq"><summary>Can I trust the suggested wording?</summary><p>Treat it as a strong first draft. The evidence badge proves the quotes are real, but not that the interpretation is right — that's why every change needs a person's approval.</p></details>
+            <details class="faq"><summary>Why does it say “Check manually” on some items?</summary><p>The system couldn't confirm a quote word-for-word, even after asking the AI to correct it. The finding may still be useful, but read the original clause before approving.</p></details>
+            <details class="faq"><summary>A clause I expected is missing. Why?</summary><p>Search may not have ranked it highly enough. Use the <a href="#/search">Search playground</a> to see how it ranks, and check the clause exists in the <a href="#/library">Policy library</a>.</p></details>
+            <details class="faq"><summary>Is this legal advice?</summary><p>No. PolicyPilot is a drafting and review aid. The sample documents describe a fictional company and regulator.</p></details>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">PolicyPilot · Sample documents describe a fictional company and regulator · Not legal advice</footer>
+  </main>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+<script src="/static/app.js?v=0.3.4"></script>
+</body>
+</html>
