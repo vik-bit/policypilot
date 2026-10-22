@@ -47,6 +47,9 @@ class Settings:
     max_verify_retries: int = field(default_factory=lambda: int(_env("PP_MAX_VERIFY_RETRIES", "2")))
     refusal_fallback: bool = field(default_factory=lambda: _env("PP_REFUSAL_FALLBACK", "on") == "on")
 
+    # Public demo: turns off policy uploads so visitors can't change the shared library.
+    read_only: bool = field(default_factory=lambda: _env("PP_READ_ONLY", "off") == "on")
+
     # --- retrieval ---------------------------------------------------------
     # embedder: "auto" (fastembed if installed, else hashing), "fastembed", or "hashing"
     embedder: str = field(default_factory=lambda: _env("PP_EMBEDDER", "auto"))

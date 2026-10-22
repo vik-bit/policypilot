@@ -35,6 +35,22 @@ _index_lock = threading.Lock()
 _jobs: dict[str, dict] = {}
 
 
+def _install_sample_reports() -> None:
+    """Copy the bundled example reports (real AI output) into the runs folder, so the app can
+    show one at #/report/example-ai even without an API key, e.g. on the public demo."""
+    samples = settings.data_dir / "sample_reports"
+    if not samples.is_dir():
+        return
+    settings.runs_dir.mkdir(parents=True, exist_ok=True)
+    for src in samples.glob("*.json"):
+        dest = settings.runs_dir / src.name
+        if not dest.exists():
+            dest.write_bytes(src.read_bytes())
+
+
+_install_sample_reports()
+
+
 def get_index(rebuild: bool = False) -> PolicyIndex:
     global _index
     with _index_lock:
@@ -60,6 +76,7 @@ def health() -> dict:
         # True when a provider is selected but its key is missing, so the UI can say so up front.
         "key_missing": (settings.resolved_mode == "groq" and not settings.has_groq_key)
                        or (settings.resolved_mode == "claude" and not settings.has_api_key),
+        "read_only": settings.read_only,
         **idx.stats(),
     }
 
@@ -96,6 +113,8 @@ def policies() -> dict:
 
 @app.post("/api/policies")
 async def upload_policy(file: UploadFile = File(...)) -> dict:
+    if settings.read_only:
+        raise HTTPException(403, "Uploads are turned off on this public demo. Run PolicyPilot locally to add your own policies.")
     name = Path(file.filename or "upload.txt")
     if name.suffix.lower() not in SUPPORTED:
         raise HTTPException(400, f"Unsupported file type. Use one of: {', '.join(sorted(SUPPORTED))}")

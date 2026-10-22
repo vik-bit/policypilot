@@ -112,6 +112,7 @@ async function boot() {
       $("#mode-title").textContent = "Demo mode";
       $("#mode-text").textContent = "No AI key set up. Search and fact-checking are real; the assessment is rule-based.";
     }
+    if (state.health.read_only) $("label:has(#upload)")?.setAttribute("hidden", "");
     $("#ov-policies").textContent = state.health.policies.length;
     $("#ov-clauses").textContent = state.health.clauses;
   } catch {

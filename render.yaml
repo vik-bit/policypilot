@@ -1,0 +1,25 @@
+# One-click deploy of the public demo on Render (free plan).
+# Render dashboard → New → Blueprint → pick this repository.
+#
+# The demo runs in offline mode: no API keys, no cost, and visitors can't upload files.
+# It ships with a real AI report at /#/report/example-ai. The lightweight hashing embedder
+# keeps memory inside the free plan's 512 MB; run locally for the full neural search stack.
+services:
+  - type: web
+    name: policypilot-demo
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt && python -m policypilot ingest
+    startCommand: python -m policypilot serve --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.7"
+      - key: PP_PROVIDER
+        value: offline
+      - key: PP_READ_ONLY
+        value: "on"
+      - key: PP_EMBEDDER
+        value: hashing
+      - key: PP_RERANK
+        value: "off"

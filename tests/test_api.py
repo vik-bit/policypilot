@@ -69,3 +69,19 @@ def test_upload_policy(client, settings):
     assert res["clauses_added"] == 1
     (settings.policies_dir / "travel-policy.md").unlink()
     client.post("/api/policies", files={"file": ("bad.exe", b"x", "application/octet-stream")})
+
+
+def test_bundled_example_ai_report_is_served(client):
+    job = client.get("/api/jobs/example-ai").json()
+    assert job["status"] == "done"
+    assert job["report"]["mode"] == "groq" and job["report"]["findings"]
+    assert all(f["verified"] for f in job["report"]["findings"])
+
+
+def test_read_only_demo_refuses_uploads(client, monkeypatch):
+    import policypilot.api.server as server
+
+    monkeypatch.setattr(server.settings, "read_only", True)
+    assert client.get("/api/health").json()["read_only"] is True
+    res = client.post("/api/policies", files={"file": ("x.md", b"# X\n\n## 1.1 A\n\nBody text here.\n", "text/markdown")})
+    assert res.status_code == 403

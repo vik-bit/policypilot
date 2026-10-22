@@ -1,0 +1,117 @@
+{
+  "run_id": "example-ai",
+  "regulation_id": "reg-01-data-protection",
+  "regulation_title": "Circular SFR/2026/014 — Amendments to Personal Data Protection Requirements",
+  "mode": "groq",
+  "model": "openai/gpt-oss-120b",
+  "summary": "All five regulator requirements conflict with existing policy clauses. The breach notification, data retention, data localisation, consent management, and minors' data handling sections must be revised to meet the six‑hour reporting deadline, three‑year retention limit, domestic‑only storage, separate optional marketing consent with instant withdrawal, and parental consent for under‑18s respectively.",
+  "findings": [
+    {
+      "clause_id": "data-privacy§5.1",
+      "requirement_id": "R1",
+      "impact": "conflict",
+      "explanation": "The breach notification clause requires regulator reporting within 72 hours and only notifies high‑risk customers, which conflicts with the new rule to report within six hours and inform all affected individuals without regard to risk.",
+      "regulation_quote": "shall report any personal data breach to the Regulator within six (6) hours of becoming aware of it. Affected individuals shall be informed without undue delay, irrespective of the assessed level of risk.",
+      "policy_quote": "notifies the regulator within 72 hours of the breach being confirmed. Affected customers are notified only where the breach is likely to result in a high risk to them.",
+      "proposed_text": "5.1 Personal Data Breach Notification\nThe Data Protection Office shall report any personal data breach to the Regulator within six (6) hours of becoming aware of it. All affected individuals shall be informed without undue delay, regardless of the assessed level of risk. The breach shall also be recorded in the breach register as per clause 5.2.",
+      "verified": true,
+      "issues": []
+    },
+    {
+      "clause_id": "data-privacy§3.2",
+      "requirement_id": "R2",
+      "impact": "conflict",
+      "explanation": "Current retention period of ten years exceeds the three‑year limit imposed by the regulator, creating a conflict.",
+      "regulation_quote": "Personal data shall not be kept for longer than three (3) years after the end of the customer relationship, unless a longer period is expressly required by law.",
+      "policy_quote": "Customer personal data is retained for ten (10) years after the account is closed. Transaction logs are retained for two (2) years. After the retention period, data is deleted or anonymised in the next quarterly clean-up cycle.",
+      "proposed_text": "3.2 Data Retention\nCustomer personal data shall be retained for no longer than three (3) years after the end of the customer relationship, unless a longer period is required by applicable law. Transaction logs shall be retained for two (2) years. Data shall be deleted or anonymised promptly after the retention period.",
+      "verified": true,
+      "issues": []
+    },
+    {
+      "clause_id": "data-privacy§4.1",
+      "requirement_id": "R3",
+      "impact": "conflict",
+      "explanation": "Data is stored in Singapore and the United States, breaching the localisation rule that requires storage only within the country and rapid deletion of any foreign copy.",
+      "regulation_quote": "All personal and payment data of customers shall be stored only in data centres located within the country. A copy may be processed abroad for a transaction but must be deleted from foreign systems within one business day.",
+      "policy_quote": "Personal data is stored with our cloud provider in data centres located in Singapore and the United States. Backups are replicated across both regions for resilience.",
+      "proposed_text": "4.1 Data Storage Location\nPersonal and payment data of customers shall be stored exclusively in data centres located within [Country]. Where a copy is processed abroad for a transaction, it shall be deleted from the foreign system within one business day.",
+      "verified": true,
+      "issues": []
+    },
+    {
+      "clause_id": "data-privacy§2.1",
+      "requirement_id": "R4",
+      "impact": "conflict",
+      "explanation": "Consent is collected via a single mandatory checkbox that bundles marketing with service consent, violating the requirement for separate, optional marketing consent.",
+      "regulation_quote": "Consent for marketing shall be obtained separately from consent required to provide the service, and shall not be a condition for opening an account.",
+      "policy_quote": "Customer consent is collected through a single checkbox at sign-up that covers account operation, analytics and marketing communications. Customers who do not tick the checkbox cannot open an account.",
+      "proposed_text": "2.1 Lawful Basis and Consent\nConsent for the provision of the service and for marketing communications shall be obtained separately. Marketing consent shall be optional and shall not be a condition for opening an account. Each consent shall be captured via distinct opt‑in mechanisms.",
+      "verified": true,
+      "issues": []
+    },
+    {
+      "clause_id": "data-privacy§2.2",
+      "requirement_id": "R4",
+      "impact": "conflict",
+      "explanation": "Withdrawal of consent requires emailing support and may take up to 30 days, which is not as easy or immediate as the regulator demands.",
+      "regulation_quote": "Withdrawing consent shall be as easy as giving it, and shall be possible from within the entity's app or website.",
+      "policy_quote": "Customers may withdraw consent by sending an email to the support team. Withdrawal requests are processed within 30 days of receipt. Withdrawal of consent may result in closure of the account.",
+      "proposed_text": "2.2 Withdrawal of Consent\nCustomers may withdraw any previously given consent at any time directly through the app or website. Withdrawal shall be effective immediately and shall not affect the ability to maintain the account.",
+      "verified": true,
+      "issues": []
+    },
+    {
+      "clause_id": "data-privacy§6.1",
+      "requirement_id": "R5",
+      "impact": "conflict",
+      "explanation": "The policy allows users aged 16‑17 to use the service without parental consent, contrary to the regulator’s requirement for verifiable parental consent for anyone under 18.",
+      "regulation_quote": "Before processing the personal data of any individual below eighteen (18) years of age, the entity shall obtain verifiable consent of a parent or lawful guardian.",
+      "policy_quote": "Our services are available to users aged 16 and above. We do not collect parental consent for users aged between 16 and 18.",
+      "proposed_text": "6.1 Children’s Data\nThe entity shall not process personal data of individuals under eighteen (18) years of age unless verifiable consent is obtained from a parent or lawful guardian. Services shall be offered only to users who are at least eighteen (18) years old, or to younger users with appropriate parental consent.",
+      "verified": true,
+      "issues": []
+    }
+  ],
+  "requirements": [
+    {
+      "id": "R1",
+      "title": "Reporting of personal data breaches",
+      "text": "A regulated entity shall report any personal data breach to the Regulator within six (6) hours of becoming aware of it. Affected individuals shall be informed without undue delay, irrespective of the assessed level of risk."
+    },
+    {
+      "id": "R2",
+      "title": "Storage limitation",
+      "text": "Personal data shall not be kept for longer than three (3) years after the end of the customer relationship, unless a longer period is expressly required by law."
+    },
+    {
+      "id": "R3",
+      "title": "Localisation of payment data",
+      "text": "All personal and payment data of customers shall be stored only in data centres located within the country. A copy may be processed abroad for a transaction but must be deleted from foreign systems within one business day."
+    },
+    {
+      "id": "R4",
+      "title": "Granular and revocable consent",
+      "text": "Consent for marketing shall be obtained separately from consent required to provide the service, and shall not be a condition for opening an account. Withdrawing consent shall be as easy as giving it, and shall be possible from within the entity's app or website."
+    },
+    {
+      "id": "R5",
+      "title": "Data of minors",
+      "text": "Before processing the personal data of any individual below eighteen (18) years of age, the entity shall obtain verifiable consent of a parent or lawful guardian."
+    }
+  ],
+  "stats": {
+    "submissions": 2,
+    "first_pass_citations": 12,
+    "first_pass_valid": 11,
+    "final_citations": 12,
+    "final_valid": 12
+  },
+  "usage": {
+    "input_tokens": 27702,
+    "output_tokens": 6282,
+    "turns": 10
+  },
+  "decisions": {},
+  "created_at": "2026-10-21T11:33:24+00:00"
+}

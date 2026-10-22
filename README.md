@@ -151,7 +151,8 @@ pip install -r requirements.txt
 python -m policypilot serve
 ```
 
-Open **http://localhost:8000**. The **How to use** page in the app walks through everything.
+Open **http://localhost:8000**. The **How to use** page in the app walks through everything, and
+**See an example AI report** opens a real report from the Groq agent without needing an API key.
 
 **Turn on the AI agent:** copy `.env.example` to `.env` and choose a provider:
 
@@ -161,6 +162,9 @@ Open **http://localhost:8000**. The **How to use** page in the app walks through
 | **Claude** (Anthropic) | `PP_PROVIDER=claude` · `ANTHROPIC_API_KEY=sk-ant-...` |
 
 **Or with Docker:** `docker compose up`
+
+**Host a public demo:** [`render.yaml`](render.yaml) deploys a read-only demo on Render's free plan
+in one click (no API keys, uploads off, ~70 MB RAM).
 
 | Command | What it does |
 |---|---|
