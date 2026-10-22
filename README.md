@@ -30,7 +30,7 @@ the suggested rewrite (green = added, red = removed), and whether every quote wa
 |---|---|
 | **The problem** | When regulators publish new rules, compliance teams spend weeks finding which internal policies are now out of date, and rewriting them. AI can read fast but invents things, which is unacceptable in compliance. |
 | **What I built** | A full-stack **agentic RAG** system. An LLM agent searches a policy library, decides what each new rule changes, and drafts new wording. A **deterministic fact-checker** then rejects any quote that isn't word for word in the source, and the agent has to fix it. A human approves every change. |
-| **Result (measured)** | **96%** of correct clauses appear in the top-3 search results. On a labelled sample, the AI agent reached **100% precision** and **100% correct impact labels**, against 85% and 43% for a no-AI baseline. **100% of quotes shown to reviewers are verified.** [Details ↓](#results) |
+| **Result (measured)** | Across 25 hand-labelled requirements: **96%** of correct clauses in the top-3 search results; the AI agent reached **100% precision**, **93% recall** and **96% correct impact labels**, against 85% / 89% / 50% for a no-AI baseline. Nothing unverified is ever shown as verified. [Details ↓](#results) |
 | **Skills shown** | LLM tool use and agent loops · RAG (hybrid search, RRF fusion, cross-encoder reranking) · hallucination control · evaluation design · FastAPI · front-end UX · testing an LLM loop without an API · multi-provider LLM integration |
 
 ---
@@ -79,18 +79,21 @@ Each method misses things the other catches. "V-CIP" needs exact words; "storage
 
 **2. End to end: is the final report right?**
 
+All 6 regulations, all 25 requirements:
+
 | Metric | No-AI baseline | AI agent (Groq · GPT-OSS 120B) |
 |---|---|---|
-| Precision: flagged clauses that are really affected | 85% | **100%** (9/9) |
-| Recall: affected clauses found | 89% | 89% (8/9) |
-| Impact label correct (needs change / missing / compliant) | 43% | **100%** (7/7) |
-| Quotes valid in the final report | 100% | **100%** (1 corrected by the fact-checker) |
+| Precision: flagged clauses that are really affected | 85% | **100%** (27/27) |
+| Recall: affected clauses found | 89% | **93%** (25/27) |
+| Impact label correct (needs change / missing / compliant) | 50% | **96%** (23/24) |
+| Quotes verified word for word | 100% | 98% (53/54), and the 1 failure was a checker bug, [now fixed](docs/EVAL_RESULTS.md#a-bug-the-evaluation-caught) |
+| Cost | free | 167k tokens · ~17 min on Groq's free tier |
 
-<sub>AI column: a measured sample of 2 of the 6 regulations (8 requirements), compared with the baseline on the same 8.
-The full run was cut short by Groq free-tier rate limits. The baseline scores 85% / 89% / 50% across all 25 requirements.</sub>
-
-**What this shows:** search finds the clauses; the agent adds the judgement. When the model got a
-quote wrong, the fact-checker caught it and the model fixed it before anything reached the reviewer.
+**What this shows:** search finds the clauses; the agent adds the judgement. It flagged no
+unrelated clause and labelled 23 of 24 correctly. The evaluation also caught a bug in my own
+fact-checker: it rejected a real quote because the model typed a Unicode non-breaking hyphen. The
+flaw failed safe (the finding was flagged for manual check, never shown as verified), and it's now
+fixed with a regression test. Every miss is analysed in [docs/EVAL_RESULTS.md](docs/EVAL_RESULTS.md).
 
 ---
 
@@ -171,7 +174,7 @@ in one click (no API keys, uploads off, ~70 MB RAM).
 | `python -m policypilot analyze reg-01-data-protection` | Analyse a regulation from the terminal |
 | `python -m policypilot search "how long do we keep data?"` | Try the search step on its own |
 | `python -m policypilot eval` | Re-run the evaluation and regenerate `docs/EVAL_RESULTS.md` |
-| `python -m pytest` | Run the 26 tests (no API key or internet needed) |
+| `python -m pytest` | Run the 30 tests (no API key or internet needed) |
 
 ---
 
@@ -210,7 +213,7 @@ policypilot/
 │   └── eval/run_eval.py     ← retrieval and end-to-end scoring
 ├── data/                    ← sample policies, regulations, hand-written labels (fictional)
 ├── docs/                    ← system design, plain-English tour, glossary, results, screenshots
-└── tests/                   ← 26 tests, including both agent loops against fake APIs
+└── tests/                   ← 30 tests, including both agent loops against fake APIs
 ```
 
 ---
@@ -219,7 +222,6 @@ policypilot/
 
 - **Small, fictional data set:** 51 clauses and labels written by one person. A production
   evaluation would need real documents and several reviewers.
-- **The AI result is a sample** (8 requirements). `python -m policypilot eval` runs all 25.
 - **The fact-checker proves a quote exists, not that the interpretation is right.** That's why a human
   approves every change.
 - **Next:** analyse only what changed between versions of a regulation; prompt caching to cut cost;
