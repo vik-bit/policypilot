@@ -9,7 +9,7 @@ changes, and proves every claim with a quote that is checked automatically.**
 ![FastAPI](https://img.shields.io/badge/FastAPI-backend-009688?logo=fastapi&logoColor=white)
 ![LLM](https://img.shields.io/badge/LLM-Claude%20%7C%20Groq%20(GPT--OSS)-6E56CF)
 ![RAG](https://img.shields.io/badge/RAG-BM25%20%2B%20embeddings%20%2B%20rerank-2950D6)
-![Tests](https://img.shields.io/badge/tests-26%20passing-067647)
+[![Tests](https://github.com/vik-bit/policypilot/actions/workflows/tests.yml/badge.svg)](https://github.com/vik-bit/policypilot/actions/workflows/tests.yml)
 ![License](https://img.shields.io/badge/license-MIT-lightgrey)
 
 [What it does](#what-it-does) · [Results](#results) · [How it works](#how-it-works) ·
