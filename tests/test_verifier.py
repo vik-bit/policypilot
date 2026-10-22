@@ -52,3 +52,18 @@ def test_too_short_quotes_are_rejected(settings, index):
 
 def test_duplicates_are_dropped(settings, index):
     assert len(verify([_finding(), _finding()], _reg(settings), index)) == 1
+
+
+def test_unicode_hyphens_and_spaces_match_plain_ones():
+    # GPT-OSS writes "board‑approved" with U+2011 (non-breaking hyphen); the document has "-".
+    assert quote_in("the entity’s board‑approved policy", "the entity's board-approved policy")
+    assert quote_in("T− 1 and 24 hours", "T- 1 and 24 hours")
+
+
+def test_hint_sentences_do_not_include_headings():
+    from policypilot.textutil import sentences
+
+    text = "## R1. Zero liability\n\nA customer shall bear zero liability. Beyond that, rules apply."
+    out = sentences(text)
+    assert "A customer shall bear zero liability." in out  # the body sentence stands alone
+    assert not any("liability A customer" in s for s in out)  # heading not glued onto it

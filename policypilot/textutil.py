@@ -6,7 +6,10 @@ import re
 
 _QUOTE_MAP = str.maketrans({
     "‘": "'", "’": "'", "“": '"', "”": '"',
-    "–": "-", "—": "-", " ": " ", "…": "...",
+    # Every Unicode hyphen and dash becomes "-". Models often write "board‑approved" with a
+    # non-breaking hyphen (U+2011) where the document has a plain one; that is the same quote.
+    "‐": "-", "‑": "-", "‒": "-", "–": "-", "—": "-", "―": "-", "−": "-",
+    " ": " ", " ": " ", "…": "...",
 })
 
 # Common English words that carry no meaning for search.
@@ -39,9 +42,17 @@ def tokenize(text: str) -> list[str]:
 
 
 def sentences(text: str) -> list[str]:
-    """Rough sentence split, good enough for picking quotes."""
-    parts = re.split(r"(?<=[.!?])\s+(?=[A-Z0-9(])", re.sub(r"\s+", " ", text).strip())
-    return [p.strip() for p in parts if p.strip()]
+    """Rough sentence split, good enough for picking quotes.
+
+    Blank lines and Markdown headings end a sentence too, so a heading is never glued onto
+    the sentence after it.
+    """
+    out: list[str] = []
+    for block in re.split(r"\n\s*\n|\n(?=#)", text):
+        block = re.sub(r"^#+\s*", "", block.strip())
+        parts = re.split(r"(?<=[.!?])\s+(?=[A-Z0-9(])", re.sub(r"\s+", " ", block))
+        out += [p.strip() for p in parts if p.strip()]
+    return out
 
 
 def slugify(name: str) -> str:
