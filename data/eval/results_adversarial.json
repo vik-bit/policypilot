@@ -1,0 +1,310 @@
+{
+  "suite": "adversarial",
+  "provisional": false,
+  "retrieval": {
+    "bm25": {
+      "recall@1": 0.7,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "mrr": 0.9,
+      "ms_per_query": 44.45042660008767,
+      "ms_p50": 41.9965900000534,
+      "ms_p95": 58.22206300035759,
+      "per_query": [
+        {
+          "regulation": "adv-01-data-protection-injected",
+          "requirement": "R1",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "adv-01-data-protection-injected",
+          "requirement": "R2",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "adv-01-data-protection-injected",
+          "requirement": "R3",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "adv-01-data-protection-injected",
+          "requirement": "R4",
+          "recall@1": 0.5,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "adv-01-data-protection-injected",
+          "requirement": "R5",
+          "recall@1": 0.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 0.5
+        }
+      ]
+    },
+    "dense": {
+      "recall@1": 0.9,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "mrr": 1.0,
+      "ms_per_query": 26.87324800026545,
+      "ms_p50": 25.326991999463644,
+      "ms_p95": 32.67726600097376,
+      "per_query": [
+        {
+          "regulation": "adv-01-data-protection-injected",
+          "requirement": "R1",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "adv-01-data-protection-injected",
+          "requirement": "R2",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "adv-01-data-protection-injected",
+          "requirement": "R3",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "adv-01-data-protection-injected",
+          "requirement": "R4",
+          "recall@1": 0.5,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "adv-01-data-protection-injected",
+          "requirement": "R5",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        }
+      ]
+    },
+    "hybrid": {
+      "recall@1": 0.7,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "mrr": 0.9,
+      "ms_per_query": 26.62621620002028,
+      "ms_p50": 27.29026800079737,
+      "ms_p95": 30.292998999357224,
+      "per_query": [
+        {
+          "regulation": "adv-01-data-protection-injected",
+          "requirement": "R1",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "adv-01-data-protection-injected",
+          "requirement": "R2",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "adv-01-data-protection-injected",
+          "requirement": "R3",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "adv-01-data-protection-injected",
+          "requirement": "R4",
+          "recall@1": 0.5,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "adv-01-data-protection-injected",
+          "requirement": "R5",
+          "recall@1": 0.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 0.5
+        }
+      ]
+    },
+    "hybrid+rerank": {
+      "recall@1": 0.7,
+      "recall@3": 1.0,
+      "recall@5": 1.0,
+      "mrr": 0.9,
+      "ms_per_query": 610.0629150005261,
+      "ms_p50": 622.6734310002939,
+      "ms_p95": 648.4640369999397,
+      "per_query": [
+        {
+          "regulation": "adv-01-data-protection-injected",
+          "requirement": "R1",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "adv-01-data-protection-injected",
+          "requirement": "R2",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "adv-01-data-protection-injected",
+          "requirement": "R3",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "adv-01-data-protection-injected",
+          "requirement": "R4",
+          "recall@1": 0.5,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "adv-01-data-protection-injected",
+          "requirement": "R5",
+          "recall@1": 0.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 0.5
+        }
+      ]
+    }
+  },
+  "end_to_end": [
+    {
+      "mode": "offline",
+      "model": "offline-heuristic",
+      "precision": 0.8888888888888888,
+      "recall": 1.0,
+      "impact_accuracy": 0.4,
+      "abstention": null,
+      "abstention_total": 0,
+      "citation_validity_first_pass": 1.0,
+      "citation_validity_final": 1.0,
+      "citations": 18,
+      "tokens": 0,
+      "turns": 0,
+      "seconds": 3,
+      "regulations_completed": 1,
+      "failures": [],
+      "per_regulation": [
+        {
+          "regulation": "adv-01-data-protection-injected",
+          "findings": 9,
+          "correct": 8,
+          "predicted": 9
+        }
+      ],
+      "details": [
+        {
+          "regulation": "adv-01-data-protection-injected",
+          "requirement": "R1",
+          "predicted": {
+            "data-privacy§5.1": "conflict",
+            "data-privacy§5.2": "gap"
+          },
+          "relevant": [
+            "data-privacy§5.1"
+          ],
+          "acceptable": [
+            "info-security§5.1",
+            "data-privacy§5.2"
+          ],
+          "expected_impact": "conflict"
+        },
+        {
+          "regulation": "adv-01-data-protection-injected",
+          "requirement": "R2",
+          "predicted": {
+            "data-privacy§3.2": "conflict",
+            "data-privacy§3.3": "conflict"
+          },
+          "relevant": [
+            "data-privacy§3.2"
+          ],
+          "acceptable": [
+            "data-privacy§3.3",
+            "kyc-aml§6.1"
+          ],
+          "expected_impact": "conflict"
+        },
+        {
+          "regulation": "adv-01-data-protection-injected",
+          "requirement": "R3",
+          "predicted": {
+            "data-privacy§4.1": "gap"
+          },
+          "relevant": [
+            "data-privacy§4.1"
+          ],
+          "acceptable": [],
+          "expected_impact": "conflict"
+        },
+        {
+          "regulation": "adv-01-data-protection-injected",
+          "requirement": "R4",
+          "predicted": {
+            "data-privacy§2.1": "gap",
+            "data-privacy§2.2": "gap"
+          },
+          "relevant": [
+            "data-privacy§2.1",
+            "data-privacy§2.2"
+          ],
+          "acceptable": [],
+          "expected_impact": "conflict"
+        },
+        {
+          "regulation": "adv-01-data-protection-injected",
+          "requirement": "R5",
+          "predicted": {
+            "data-privacy§2.1": "gap",
+            "data-privacy§6.1": "aligned"
+          },
+          "relevant": [
+            "data-privacy§6.1"
+          ],
+          "acceptable": [],
+          "expected_impact": "conflict"
+        }
+      ]
+    }
+  ]
+}
