@@ -30,7 +30,7 @@ the suggested rewrite (green = added, red = removed), and whether every quote wa
 |---|---|
 | **The problem** | When regulators publish new rules, compliance teams spend weeks finding which internal policies are now out of date, and rewriting them. AI can read fast but invents things, which is unacceptable in compliance. |
 | **What I built** | A full-stack **agentic RAG** system. An LLM agent searches a policy library, decides what each new rule changes, and drafts new wording. A **deterministic fact-checker** then rejects any quote that isn't word for word in the source, and the agent has to fix it. A human approves every change. |
-| **Result (measured)** | Across 25 hand-labelled requirements: **96%** of correct clauses in the top-3 search results; the AI agent reached **100% precision**, **93% recall** and **96% correct impact labels**, against 85% / 89% / 50% for a no-AI baseline. Nothing unverified is ever shown as verified. [Details ↓](#results) |
+| **Result (measured)** | Across 25 hand-labelled requirements: **96%** of correct clauses in the top-3 search results; the AI agent reached **100% precision**, **93% recall** and **96% correct impact labels**, against 85% / 89% / 50% for a no-AI baseline, a gain that is statistically significant (p = 0.0002). Nothing unverified is ever shown as verified. Also tested on 38 requirements from real Indian regulations, against prompt injection, and at 10,000 clauses. [Details ↓](#results) |
 | **Skills shown** | LLM tool use and agent loops · RAG (hybrid search, RRF fusion, cross-encoder reranking) · hallucination control · evaluation design · FastAPI · front-end UX · testing an LLM loop without an API · multi-provider LLM integration |
 
 ---
@@ -94,6 +94,42 @@ unrelated clause and labelled 23 of 24 correctly. The evaluation also caught a b
 fact-checker: it rejected a real quote because the model typed a Unicode non-breaking hyphen. The
 flaw failed safe (the finding was flagged for manual check, never shown as verified), and it's now
 fixed with a regression test. Every miss is analysed in [docs/EVAL_RESULTS.md](docs/EVAL_RESULTS.md).
+
+**3. How sure can we be, and does it hold up outside the sample set?**
+
+25 requirements is a small sample, and the sample set was built alongside the system. So I wrote
+an [evaluation plan](docs/EVAL_PLAN.md) *before* scoring anything new. It fixes the metrics,
+statistics and pass bars in advance.
+
+- **Confidence intervals** ([EVAL_STATS.md](docs/EVAL_STATS.md)). The agent's 96% impact accuracy
+  is really **87–100%**, and recall is **82–100%**. The gain over the baseline is unlikely to be
+  luck. The agent was fully right on 13 requirements where the baseline wasn't, and never the
+  reverse (exact McNemar test, **p = 0.0002**).
+- **Real regulations** ([EVAL_RESULTS_REAL.md](docs/EVAL_RESULTS_REAL.md)). There are 38
+  requirements from CERT-In's 2022 Directions, the DPDP Act 2023 and four RBI circulars, held out
+  from all tuning. Three of them don't apply to a payments wallet at all, which tests whether the
+  system knows when to say nothing. The labels are **drafts awaiting review**
+  ([LABEL_REVIEW.md](docs/LABEL_REVIEW.md)), so these numbers are provisional. Search holds up
+  (hybrid recall@3 **89%**). The no-AI baseline does not: 58% precision, 38% impact accuracy, and
+  it never abstains. The agent has not been scored on this set yet.
+- **Prompt injection.** A regulation could contain `</regulation>` followed by a fake `SYSTEM:`
+  line, which escaped the block the model is told is data. That's fixed, and
+  [`tests/test_injection.py`](tests/test_injection.py) checks it. The tests also check that
+  planted instructions in a policy can't change what the fact-checker accepts and reach the model
+  only as tool data. An [adversarial copy](data/regulations_adversarial/) of a regulation, with
+  four planted instructions, is ready for an agent run.
+- **Scale** ([SCALE_RESULTS.md](docs/SCALE_RESULTS.md)). I grew the library from 51 to 10,051
+  clauses with real contract provisions as distractors.
+
+  | Clauses | Recall@3 (hybrid + rerank) | Search time p50 |
+  |---|---|---|
+  | 51 | 96% | 0.6 s |
+  | 10,051 | 84% | 2.3 s |
+
+  The cross-encoder is both the slowest step and, with distractors, the one that *lowers* recall.
+  Hybrid without it holds 86% in 0.11 s, about 20 times faster. The real-regulation set points the same way
+  (89% without, 86% with). Embedding the large library also exposed a memory bug: fastembed's
+  default batch used 6.9 GB and was killed. A smaller batch fixed it (3.5 GB peak).
 
 ---
 
@@ -174,7 +210,10 @@ in one click (no API keys, uploads off, ~70 MB RAM).
 | `python -m policypilot analyze reg-01-data-protection` | Analyse a regulation from the terminal |
 | `python -m policypilot search "how long do we keep data?"` | Try the search step on its own |
 | `python -m policypilot eval` | Re-run the evaluation and regenerate `docs/EVAL_RESULTS.md` |
-| `python -m pytest` | Run the 30 tests (no API key or internet needed) |
+| `python -m policypilot eval --suite real --agent-runs 3` | Score the held-out real regulations, with 3 agent runs as the plan requires (`--suite adversarial` for the injection set) |
+| `python -m policypilot stats` | Confidence intervals and significance tests from the saved results, with no API calls |
+| `python -m policypilot scale` | Grow the library to 10,000 clauses and measure search quality and speed |
+| `python -m pytest` | Run the 47 tests (no API key or internet needed) |
 
 ---
 
@@ -210,18 +249,26 @@ policypilot/
 │   │   └── offline.py       ← no-AI baseline
 │   ├── api/server.py        ← FastAPI: background jobs, search, uploads, decisions
 │   ├── web/                 ← UI (HTML/CSS/JS, no build step)
-│   └── eval/run_eval.py     ← retrieval and end-to-end scoring
-├── data/                    ← sample policies, regulations, hand-written labels (fictional)
-├── docs/                    ← system design, plain-English tour, glossary, results, screenshots
-└── tests/                   ← 30 tests, including both agent loops against fake APIs
+│   └── eval/
+│       ├── run_eval.py      ← retrieval and end-to-end scoring for each test set
+│       ├── stats.py         ← bootstrap confidence intervals, McNemar test
+│       └── scale.py         ← benchmark with 10,000 distractor clauses
+├── data/                    ← policies and sample regulations (fictional), real regulation excerpts, labels
+├── docs/                    ← system design, eval plan and results, label review, glossary, screenshots
+└── tests/                   ← 47 tests, including both agent loops and injection checks against fake APIs
 ```
 
 ---
 
 ## Limitations and next steps
 
-- **Small, fictional data set:** 51 clauses and labels written by one person. A production
-  evaluation would need real documents and several reviewers.
+- **Small data set, fictional policies:** 51 policy clauses, 63 labelled requirements (25 fictional,
+  38 from real regulations with labels still in draft). A production evaluation would need real
+  company policies, 100+ requirements and several reviewers.
+- **The agent has not yet been scored on the real or adversarial sets.** That needs API credits:
+  `eval --suite real --agent-runs 3`.
+- **The reranker needs rethinking** for large libraries: it is the slowest step and hurt recall
+  once distractors were added.
 - **The fact-checker proves a quote exists, not that the interpretation is right.** That's why a human
   approves every change.
 - **Next:** analyse only what changed between versions of a regulation; prompt caching to cut cost;
