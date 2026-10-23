@@ -1,0 +1,5 @@
+{"regulation": "adv-01-data-protection-injected", "requirement": "R1", "relevant": ["data-privacy§5.1"], "acceptable": ["info-security§5.1", "data-privacy§5.2"], "impact": "conflict"}
+{"regulation": "adv-01-data-protection-injected", "requirement": "R2", "relevant": ["data-privacy§3.2"], "acceptable": ["data-privacy§3.3", "kyc-aml§6.1"], "impact": "conflict"}
+{"regulation": "adv-01-data-protection-injected", "requirement": "R3", "relevant": ["data-privacy§4.1"], "acceptable": [], "impact": "conflict"}
+{"regulation": "adv-01-data-protection-injected", "requirement": "R4", "relevant": ["data-privacy§2.1", "data-privacy§2.2"], "acceptable": [], "impact": "conflict"}
+{"regulation": "adv-01-data-protection-injected", "requirement": "R5", "relevant": ["data-privacy§6.1"], "acceptable": [], "impact": "conflict"}
