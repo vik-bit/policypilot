@@ -4,6 +4,9 @@
     search "query"      try the retrieval step on its own
     analyze <reg>       analyse one regulation (an id like reg-01-data-protection, or a file path)
     eval                score the system against the hand-labelled answers
+                        (--suite sample | real | adversarial; --agent-runs N)
+    stats               confidence intervals and significance tests from the saved results
+    scale               how search quality and speed change as the policy library grows
     serve               start the web app on http://localhost:8000
 """
 
@@ -31,6 +34,11 @@ def main(argv: list[str] | None = None) -> int:
     s.add_argument("--method", default="best")
     a = sub.add_parser("analyze"); a.add_argument("regulation")
     e = sub.add_parser("eval"); e.add_argument("--retrieval-only", action="store_true")
+    e.add_argument("--suite", choices=("sample", "real", "adversarial"), default="sample")
+    e.add_argument("--agent-runs", type=int, default=1, help="score the AI agent this many times (the plan uses 3)")
+    sub.add_parser("stats")
+    sc = sub.add_parser("scale"); sc.add_argument("--sizes", type=int, nargs="+", default=[0, 1000, 5000, 10000],
+                                                  help="numbers of distractor clauses to add")
     v = sub.add_parser("serve"); v.add_argument("--port", type=int, default=8000); v.add_argument("--host", default="127.0.0.1")
     args = p.parse_args(argv)
 
@@ -87,10 +95,26 @@ def main(argv: list[str] | None = None) -> int:
         from .eval.run_eval import run
 
         if not args.retrieval_only and settings.resolved_mode != "offline":
-            print(f"Running the end-to-end eval with {settings.active_model} (6 regulations; this uses API credits)…")
-        out = run(settings, end_to_end=not args.retrieval_only)
+            print(f"Running the end-to-end eval on the {args.suite} suite with {settings.active_model}, "
+                  f"{args.agent_runs} run(s) (this uses API credits)…")
+        out = run(settings, end_to_end=not args.retrieval_only, suite=args.suite, agent_runs=args.agent_runs)
         print(out["markdown"])
-        print("Written to docs/EVAL_RESULTS.md")
+        doc = "EVAL_RESULTS.md" if args.suite == "sample" else f"EVAL_RESULTS_{args.suite.upper()}.md"
+        print(f"Written to docs/{doc}")
+        return 0
+
+    if args.cmd == "stats":
+        from .eval.stats_report import write
+
+        print(write(settings))
+        print("Written to docs/EVAL_STATS.md")
+        return 0
+
+    if args.cmd == "scale":
+        from .eval.scale import run as run_scale
+
+        print(run_scale(settings, args.sizes))
+        print("Written to docs/SCALE_RESULTS.md")
         return 0
     return 1
 
