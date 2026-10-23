@@ -57,6 +57,9 @@ class Settings:
     # rerank: "auto" (cross-encoder if fastembed is installed), "on", or "off"
     rerank: str = field(default_factory=lambda: _env("PP_RERANK", "auto"))
     rerank_model: str = field(default_factory=lambda: _env("PP_RERANK_MODEL", "Xenova/ms-marco-MiniLM-L-6-v2"))
+    # dense_backend: "exact" (compare the query with every clause) or "vecdex" (HNSW graph search
+    # from the vecdex package, for libraries too large to scan)
+    dense_backend: str = field(default_factory=lambda: _env("PP_DENSE_BACKEND", "exact").lower())
 
     @property
     def policies_dir(self) -> Path:

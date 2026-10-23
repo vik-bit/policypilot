@@ -45,14 +45,34 @@ def _fingerprint(policies_dir: Path, embedder_name: str) -> str:
     return h.hexdigest()[:16]
 
 
+def _make_ann(vectors: np.ndarray):
+    """An HNSW index over the clause vectors, built with vecdex (github.com/vik-bit/vecdex).
+
+    The "ip" metric scores by dot product, the same as the exact search, so the two backends
+    rank clauses identically whenever the graph search finds the true neighbours.
+    """
+    try:
+        import vecdex
+    except ImportError as e:
+        raise RuntimeError("PP_DENSE_BACKEND=vecdex needs the vecdex package "
+                           "(pip install git+https://github.com/vik-bit/vecdex)") from e
+    ann = vecdex.Index(vectors.shape[1], len(vectors), metric="ip", M=16, ef_construction=200)
+    ann.add(vectors)
+    return ann
+
+
 class PolicyIndex:
     def __init__(self, clauses: list[Clause], embedder: Embedder, vectors: np.ndarray,
-                 reranker: CrossEncoderReranker | None = None):
+                 reranker: CrossEncoderReranker | None = None, dense_backend: str = "exact"):
+        if dense_backend not in ("exact", "vecdex"):
+            raise ValueError(f"dense_backend must be 'exact' or 'vecdex', got {dense_backend!r}")
         self.clauses = clauses
         self.by_id = {c.id: c for c in clauses}
         self.embedder = embedder
         self.vectors = vectors
         self.reranker = reranker
+        self.dense_backend = dense_backend
+        self.ann = _make_ann(vectors) if dense_backend == "vecdex" and len(clauses) else None
         self.bm25 = BM25().fit([tokenize(_search_text(c)) for c in clauses])
 
     # ------------------------------------------------------------------ build / load
@@ -72,7 +92,7 @@ class PolicyIndex:
         if not force and manifest.exists() and vec_path.exists():
             meta = json.loads(manifest.read_text(encoding="utf-8"))
             if meta.get("fingerprint") == fp and meta.get("count") == len(clauses):
-                return cls(clauses, embedder, np.load(vec_path), reranker)
+                return cls(clauses, embedder, np.load(vec_path), reranker, settings.dense_backend)
 
         vectors = embedder.embed_documents(texts) if texts else np.zeros((0, 1), dtype=np.float32)
         idx_dir.mkdir(parents=True, exist_ok=True)
@@ -83,7 +103,7 @@ class PolicyIndex:
             "fingerprint": fp, "count": len(clauses), "embedder": embedder.name,
             "reranker": reranker.name if reranker else None,
         }, indent=2), encoding="utf-8")
-        return cls(clauses, embedder, vectors, reranker)
+        return cls(clauses, embedder, vectors, reranker, settings.dense_backend)
 
     # ------------------------------------------------------------------ queries
     def get(self, clause_id: str) -> Clause | None:
@@ -97,6 +117,11 @@ class PolicyIndex:
     def _dense_ranking(self, query: str) -> list[tuple[int, float]]:
         if not len(self.clauses):
             return []
+        if self.ann is not None:
+            k = min(CANDIDATES, len(self.clauses))
+            labels, dists = self.ann.search(self.embedder.embed_query(query), k=k, ef=max(64, k))
+            # vecdex returns 1 - dot product as a distance; turn it back into a similarity.
+            return [(int(i), 1.0 - float(d)) for i, d in zip(labels[0], dists[0]) if i >= 0]
         sims = self.vectors @ self.embedder.embed_query(query)
         order = np.argsort(-sims)[:CANDIDATES]
         return [(int(i), float(sims[i])) for i in order]
@@ -144,4 +169,5 @@ class PolicyIndex:
             "policies": list(policies.values()),
             "embedder": self.embedder.name,
             "reranker": self.reranker.name if self.reranker else None,
+            "dense_backend": self.dense_backend,
         }
