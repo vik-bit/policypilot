@@ -1,0 +1,1739 @@
+{
+  "suite": "real",
+  "provisional": true,
+  "retrieval": {
+    "bm25": {
+      "recall@1": 0.5285714285714286,
+      "recall@3": 0.7714285714285715,
+      "recall@5": 0.8571428571428571,
+      "mrr": 0.6738095238095237,
+      "ms_per_query": 21.33629677134325,
+      "ms_p50": 19.945177000408876,
+      "ms_p95": 34.40306799893733,
+      "per_query": [
+        {
+          "regulation": "real-01-cert-in-directions-2022",
+          "requirement": "R1",
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "rr": 0.0
+        },
+        {
+          "regulation": "real-01-cert-in-directions-2022",
+          "requirement": "R2",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-01-cert-in-directions-2022",
+          "requirement": "R3",
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "rr": 0.0
+        },
+        {
+          "regulation": "real-01-cert-in-directions-2022",
+          "requirement": "R4",
+          "recall@1": 0.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 0.3333333333333333
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "requirement": "R1",
+          "recall@1": 0.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 0.5
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "requirement": "R2",
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 1.0,
+          "rr": 0.25
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "requirement": "R3",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "requirement": "R4",
+          "recall@1": 0.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 0.5
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "requirement": "R5",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "requirement": "R6",
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 1.0,
+          "rr": 0.25
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "requirement": "R7",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "requirement": "R8",
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "rr": 0.0
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "requirement": "R9",
+          "recall@1": 0.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 0.5
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "requirement": "R10",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "requirement": "R11",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-03-rbi-customer-liability-2017",
+          "requirement": "R1",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-03-rbi-customer-liability-2017",
+          "requirement": "R2",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-03-rbi-customer-liability-2017",
+          "requirement": "R3",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-03-rbi-customer-liability-2017",
+          "requirement": "R4",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-03-rbi-customer-liability-2017",
+          "requirement": "R5",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-03-rbi-customer-liability-2017",
+          "requirement": "R6",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-04-rbi-failed-transactions-tat-2019",
+          "requirement": "R1",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-04-rbi-failed-transactions-tat-2019",
+          "requirement": "R2",
+          "recall@1": 0.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 0.5
+        },
+        {
+          "regulation": "real-05-rbi-digital-payment-security-2021",
+          "requirement": "R1",
+          "recall@1": 0.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 0.5
+        },
+        {
+          "regulation": "real-05-rbi-digital-payment-security-2021",
+          "requirement": "R2",
+          "recall@1": 0.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 0.5
+        },
+        {
+          "regulation": "real-05-rbi-digital-payment-security-2021",
+          "requirement": "R3",
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 1.0,
+          "rr": 0.25
+        },
+        {
+          "regulation": "real-05-rbi-digital-payment-security-2021",
+          "requirement": "R4",
+          "recall@1": 0.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 0.5
+        },
+        {
+          "regulation": "real-05-rbi-digital-payment-security-2021",
+          "requirement": "R5",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-05-rbi-digital-payment-security-2021",
+          "requirement": "R6",
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "rr": 0.0
+        },
+        {
+          "regulation": "real-05-rbi-digital-payment-security-2021",
+          "requirement": "R7",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-06-rbi-kyc-master-direction",
+          "requirement": "R1",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-06-rbi-kyc-master-direction",
+          "requirement": "R2",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-06-rbi-kyc-master-direction",
+          "requirement": "R3",
+          "recall@1": 0.5,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-06-rbi-kyc-master-direction",
+          "requirement": "R4",
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "rr": 0.0
+        },
+        {
+          "regulation": "real-06-rbi-kyc-master-direction",
+          "requirement": "R5",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        }
+      ]
+    },
+    "dense": {
+      "recall@1": 0.7285714285714285,
+      "recall@3": 0.8571428571428571,
+      "recall@5": 0.8571428571428571,
+      "mrr": 0.7952380952380952,
+      "ms_per_query": 19.682361628552567,
+      "ms_p50": 19.19805599936808,
+      "ms_p95": 27.536008001334267,
+      "per_query": [
+        {
+          "regulation": "real-01-cert-in-directions-2022",
+          "requirement": "R1",
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "rr": 0.0
+        },
+        {
+          "regulation": "real-01-cert-in-directions-2022",
+          "requirement": "R2",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-01-cert-in-directions-2022",
+          "requirement": "R3",
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "rr": 0.0
+        },
+        {
+          "regulation": "real-01-cert-in-directions-2022",
+          "requirement": "R4",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "requirement": "R1",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "requirement": "R2",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "requirement": "R3",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "requirement": "R4",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "requirement": "R5",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "requirement": "R6",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "requirement": "R7",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "requirement": "R8",
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "rr": 0.0
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "requirement": "R9",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "requirement": "R10",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "requirement": "R11",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-03-rbi-customer-liability-2017",
+          "requirement": "R1",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-03-rbi-customer-liability-2017",
+          "requirement": "R2",
+          "recall@1": 0.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 0.5
+        },
+        {
+          "regulation": "real-03-rbi-customer-liability-2017",
+          "requirement": "R3",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-03-rbi-customer-liability-2017",
+          "requirement": "R4",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-03-rbi-customer-liability-2017",
+          "requirement": "R5",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-03-rbi-customer-liability-2017",
+          "requirement": "R6",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-04-rbi-failed-transactions-tat-2019",
+          "requirement": "R1",
+          "recall@1": 0.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 0.3333333333333333
+        },
+        {
+          "regulation": "real-04-rbi-failed-transactions-tat-2019",
+          "requirement": "R2",
+          "recall@1": 0.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 0.5
+        },
+        {
+          "regulation": "real-05-rbi-digital-payment-security-2021",
+          "requirement": "R1",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-05-rbi-digital-payment-security-2021",
+          "requirement": "R2",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-05-rbi-digital-payment-security-2021",
+          "requirement": "R3",
+          "recall@1": 0.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 0.5
+        },
+        {
+          "regulation": "real-05-rbi-digital-payment-security-2021",
+          "requirement": "R4",
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "rr": 0.0
+        },
+        {
+          "regulation": "real-05-rbi-digital-payment-security-2021",
+          "requirement": "R5",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-05-rbi-digital-payment-security-2021",
+          "requirement": "R6",
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "rr": 0.0
+        },
+        {
+          "regulation": "real-05-rbi-digital-payment-security-2021",
+          "requirement": "R7",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-06-rbi-kyc-master-direction",
+          "requirement": "R1",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-06-rbi-kyc-master-direction",
+          "requirement": "R2",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-06-rbi-kyc-master-direction",
+          "requirement": "R3",
+          "recall@1": 0.5,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-06-rbi-kyc-master-direction",
+          "requirement": "R4",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-06-rbi-kyc-master-direction",
+          "requirement": "R5",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        }
+      ]
+    },
+    "hybrid": {
+      "recall@1": 0.7,
+      "recall@3": 0.8857142857142857,
+      "recall@5": 0.9142857142857143,
+      "mrr": 0.7976190476190476,
+      "ms_per_query": 19.350838943137205,
+      "ms_p50": 19.434327001363272,
+      "ms_p95": 28.600659999938216,
+      "per_query": [
+        {
+          "regulation": "real-01-cert-in-directions-2022",
+          "requirement": "R1",
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "rr": 0.0
+        },
+        {
+          "regulation": "real-01-cert-in-directions-2022",
+          "requirement": "R2",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-01-cert-in-directions-2022",
+          "requirement": "R3",
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "rr": 0.0
+        },
+        {
+          "regulation": "real-01-cert-in-directions-2022",
+          "requirement": "R4",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "requirement": "R1",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "requirement": "R2",
+          "recall@1": 0.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 0.5
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "requirement": "R3",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "requirement": "R4",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "requirement": "R5",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "requirement": "R6",
+          "recall@1": 0.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 0.5
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "requirement": "R7",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "requirement": "R8",
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "rr": 0.0
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "requirement": "R9",
+          "recall@1": 0.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 0.5
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "requirement": "R10",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "requirement": "R11",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-03-rbi-customer-liability-2017",
+          "requirement": "R1",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-03-rbi-customer-liability-2017",
+          "requirement": "R2",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-03-rbi-customer-liability-2017",
+          "requirement": "R3",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-03-rbi-customer-liability-2017",
+          "requirement": "R4",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-03-rbi-customer-liability-2017",
+          "requirement": "R5",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-03-rbi-customer-liability-2017",
+          "requirement": "R6",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-04-rbi-failed-transactions-tat-2019",
+          "requirement": "R1",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-04-rbi-failed-transactions-tat-2019",
+          "requirement": "R2",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-05-rbi-digital-payment-security-2021",
+          "requirement": "R1",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-05-rbi-digital-payment-security-2021",
+          "requirement": "R2",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-05-rbi-digital-payment-security-2021",
+          "requirement": "R3",
+          "recall@1": 0.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 0.5
+        },
+        {
+          "regulation": "real-05-rbi-digital-payment-security-2021",
+          "requirement": "R4",
+          "recall@1": 0.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 0.3333333333333333
+        },
+        {
+          "regulation": "real-05-rbi-digital-payment-security-2021",
+          "requirement": "R5",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-05-rbi-digital-payment-security-2021",
+          "requirement": "R6",
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 1.0,
+          "rr": 0.25
+        },
+        {
+          "regulation": "real-05-rbi-digital-payment-security-2021",
+          "requirement": "R7",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-06-rbi-kyc-master-direction",
+          "requirement": "R1",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-06-rbi-kyc-master-direction",
+          "requirement": "R2",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-06-rbi-kyc-master-direction",
+          "requirement": "R3",
+          "recall@1": 0.5,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-06-rbi-kyc-master-direction",
+          "requirement": "R4",
+          "recall@1": 0.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 0.3333333333333333
+        },
+        {
+          "regulation": "real-06-rbi-kyc-master-direction",
+          "requirement": "R5",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        }
+      ]
+    },
+    "hybrid+rerank": {
+      "recall@1": 0.7,
+      "recall@3": 0.8571428571428571,
+      "recall@5": 0.8857142857142857,
+      "mrr": 0.7866666666666666,
+      "ms_per_query": 525.8400981143495,
+      "ms_p50": 521.4709120009502,
+      "ms_p95": 742.6333880011953,
+      "per_query": [
+        {
+          "regulation": "real-01-cert-in-directions-2022",
+          "requirement": "R1",
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 1.0,
+          "rr": 0.2
+        },
+        {
+          "regulation": "real-01-cert-in-directions-2022",
+          "requirement": "R2",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-01-cert-in-directions-2022",
+          "requirement": "R3",
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "rr": 0.0
+        },
+        {
+          "regulation": "real-01-cert-in-directions-2022",
+          "requirement": "R4",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "requirement": "R1",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "requirement": "R2",
+          "recall@1": 0.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 0.5
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "requirement": "R3",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "requirement": "R4",
+          "recall@1": 0.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 0.5
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "requirement": "R5",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "requirement": "R6",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "requirement": "R7",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "requirement": "R8",
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "rr": 0.0
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "requirement": "R9",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "requirement": "R10",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "requirement": "R11",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-03-rbi-customer-liability-2017",
+          "requirement": "R1",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-03-rbi-customer-liability-2017",
+          "requirement": "R2",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-03-rbi-customer-liability-2017",
+          "requirement": "R3",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-03-rbi-customer-liability-2017",
+          "requirement": "R4",
+          "recall@1": 0.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 0.5
+        },
+        {
+          "regulation": "real-03-rbi-customer-liability-2017",
+          "requirement": "R5",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-03-rbi-customer-liability-2017",
+          "requirement": "R6",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-04-rbi-failed-transactions-tat-2019",
+          "requirement": "R1",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-04-rbi-failed-transactions-tat-2019",
+          "requirement": "R2",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-05-rbi-digital-payment-security-2021",
+          "requirement": "R1",
+          "recall@1": 0.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 0.5
+        },
+        {
+          "regulation": "real-05-rbi-digital-payment-security-2021",
+          "requirement": "R2",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-05-rbi-digital-payment-security-2021",
+          "requirement": "R3",
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "rr": 0.0
+        },
+        {
+          "regulation": "real-05-rbi-digital-payment-security-2021",
+          "requirement": "R4",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-05-rbi-digital-payment-security-2021",
+          "requirement": "R5",
+          "recall@1": 0.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 0.3333333333333333
+        },
+        {
+          "regulation": "real-05-rbi-digital-payment-security-2021",
+          "requirement": "R6",
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "rr": 0.0
+        },
+        {
+          "regulation": "real-05-rbi-digital-payment-security-2021",
+          "requirement": "R7",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-06-rbi-kyc-master-direction",
+          "requirement": "R1",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-06-rbi-kyc-master-direction",
+          "requirement": "R2",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-06-rbi-kyc-master-direction",
+          "requirement": "R3",
+          "recall@1": 0.5,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-06-rbi-kyc-master-direction",
+          "requirement": "R4",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        },
+        {
+          "regulation": "real-06-rbi-kyc-master-direction",
+          "requirement": "R5",
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "rr": 1.0
+        }
+      ]
+    }
+  },
+  "end_to_end": [
+    {
+      "mode": "offline",
+      "model": "offline-heuristic",
+      "precision": 0.58,
+      "recall": 0.6944444444444444,
+      "impact_accuracy": 0.375,
+      "abstention": 0.0,
+      "abstention_total": 3,
+      "citation_validity_first_pass": 1.0,
+      "citation_validity_final": 1.0,
+      "citations": 100,
+      "tokens": 0,
+      "turns": 0,
+      "seconds": 22,
+      "regulations_completed": 6,
+      "failures": [],
+      "per_regulation": [
+        {
+          "regulation": "real-01-cert-in-directions-2022",
+          "findings": 6,
+          "correct": 2,
+          "predicted": 6
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "findings": 14,
+          "correct": 9,
+          "predicted": 14
+        },
+        {
+          "regulation": "real-03-rbi-customer-liability-2017",
+          "findings": 9,
+          "correct": 6,
+          "predicted": 9
+        },
+        {
+          "regulation": "real-04-rbi-failed-transactions-tat-2019",
+          "findings": 3,
+          "correct": 2,
+          "predicted": 3
+        },
+        {
+          "regulation": "real-05-rbi-digital-payment-security-2021",
+          "findings": 9,
+          "correct": 3,
+          "predicted": 9
+        },
+        {
+          "regulation": "real-06-rbi-kyc-master-direction",
+          "findings": 9,
+          "correct": 7,
+          "predicted": 9
+        }
+      ],
+      "details": [
+        {
+          "regulation": "real-01-cert-in-directions-2022",
+          "requirement": "R1",
+          "predicted": {
+            "data-privacy§4.1": "gap"
+          },
+          "relevant": [
+            "info-security§5.2"
+          ],
+          "acceptable": [
+            "info-security§1.1",
+            "info-security§5.1"
+          ],
+          "expected_impact": "gap"
+        },
+        {
+          "regulation": "real-01-cert-in-directions-2022",
+          "requirement": "R2",
+          "predicted": {
+            "info-security§5.1": "conflict"
+          },
+          "relevant": [
+            "info-security§5.1"
+          ],
+          "acceptable": [
+            "data-privacy§5.1"
+          ],
+          "expected_impact": "conflict"
+        },
+        {
+          "regulation": "real-01-cert-in-directions-2022",
+          "requirement": "R3",
+          "predicted": {
+            "data-privacy§3.1": "gap"
+          },
+          "relevant": [
+            "info-security§5.1"
+          ],
+          "acceptable": [],
+          "expected_impact": "gap"
+        },
+        {
+          "regulation": "real-01-cert-in-directions-2022",
+          "requirement": "R4",
+          "predicted": {
+            "info-security§5.2": "conflict"
+          },
+          "relevant": [
+            "info-security§5.2"
+          ],
+          "acceptable": [
+            "data-privacy§4.1",
+            "data-privacy§3.2"
+          ],
+          "expected_impact": "conflict"
+        },
+        {
+          "regulation": "real-01-cert-in-directions-2022",
+          "requirement": "R5",
+          "predicted": {
+            "data-privacy§4.1": "gap"
+          },
+          "relevant": [],
+          "acceptable": [],
+          "expected_impact": "not_applicable"
+        },
+        {
+          "regulation": "real-01-cert-in-directions-2022",
+          "requirement": "R6",
+          "predicted": {
+            "payments-ops§2.1": "gap"
+          },
+          "relevant": [],
+          "acceptable": [],
+          "expected_impact": "not_applicable"
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "requirement": "R1",
+          "predicted": {
+            "data-privacy§2.1": "gap"
+          },
+          "relevant": [
+            "data-privacy§2.1"
+          ],
+          "acceptable": [],
+          "expected_impact": "conflict"
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "requirement": "R2",
+          "predicted": {
+            "data-privacy§2.2": "gap"
+          },
+          "relevant": [
+            "data-privacy§2.1"
+          ],
+          "acceptable": [
+            "data-privacy§6.2"
+          ],
+          "expected_impact": "gap"
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "requirement": "R3",
+          "predicted": {
+            "data-privacy§2.1": "gap",
+            "data-privacy§2.2": "gap"
+          },
+          "relevant": [
+            "data-privacy§2.2"
+          ],
+          "acceptable": [],
+          "expected_impact": "conflict"
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "requirement": "R4",
+          "predicted": {
+            "data-privacy§2.1": "gap"
+          },
+          "relevant": [
+            "data-privacy§4.2"
+          ],
+          "acceptable": [
+            "data-privacy§1.1",
+            "info-security§6.1"
+          ],
+          "expected_impact": "aligned"
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "requirement": "R5",
+          "predicted": {
+            "data-privacy§5.1": "gap",
+            "data-privacy§5.2": "gap"
+          },
+          "relevant": [
+            "data-privacy§5.1"
+          ],
+          "acceptable": [
+            "data-privacy§5.2"
+          ],
+          "expected_impact": "conflict"
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "requirement": "R6",
+          "predicted": {
+            "data-privacy§3.3": "gap",
+            "data-privacy§3.2": "gap"
+          },
+          "relevant": [
+            "data-privacy§3.2"
+          ],
+          "acceptable": [
+            "data-privacy§3.3",
+            "kyc-aml§6.1"
+          ],
+          "expected_impact": "conflict"
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "requirement": "R7",
+          "predicted": {
+            "data-privacy§6.2": "gap"
+          },
+          "relevant": [
+            "data-privacy§6.2"
+          ],
+          "acceptable": [],
+          "expected_impact": "aligned"
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "requirement": "R8",
+          "predicted": {
+            "customer-grievance§2.2": "gap"
+          },
+          "relevant": [
+            "customer-grievance§1.1"
+          ],
+          "acceptable": [
+            "data-privacy§6.2",
+            "customer-grievance§3.1"
+          ],
+          "expected_impact": "gap"
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "requirement": "R9",
+          "predicted": {
+            "data-privacy§2.1": "gap"
+          },
+          "relevant": [
+            "data-privacy§6.1"
+          ],
+          "acceptable": [],
+          "expected_impact": "conflict"
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "requirement": "R10",
+          "predicted": {
+            "data-privacy§6.1": "gap"
+          },
+          "relevant": [
+            "data-privacy§6.1"
+          ],
+          "acceptable": [
+            "data-privacy§2.1"
+          ],
+          "expected_impact": "gap"
+        },
+        {
+          "regulation": "real-02-dpdp-act-2023",
+          "requirement": "R11",
+          "predicted": {
+            "data-privacy§3.3": "gap"
+          },
+          "relevant": [
+            "data-privacy§3.3"
+          ],
+          "acceptable": [
+            "data-privacy§3.2"
+          ],
+          "expected_impact": "aligned"
+        },
+        {
+          "regulation": "real-03-rbi-customer-liability-2017",
+          "requirement": "R1",
+          "predicted": {
+            "payments-ops§4.1": "gap"
+          },
+          "relevant": [
+            "payments-ops§4.1"
+          ],
+          "acceptable": [],
+          "expected_impact": "conflict"
+        },
+        {
+          "regulation": "real-03-rbi-customer-liability-2017",
+          "requirement": "R2",
+          "predicted": {
+            "info-security§2.2": "conflict",
+            "payments-ops§3.2": "conflict"
+          },
+          "relevant": [
+            "payments-ops§3.2"
+          ],
+          "acceptable": [
+            "customer-grievance§2.1"
+          ],
+          "expected_impact": "conflict"
+        },
+        {
+          "regulation": "real-03-rbi-customer-liability-2017",
+          "requirement": "R3",
+          "predicted": {
+            "customer-grievance§2.2": "gap"
+          },
+          "relevant": [
+            "customer-grievance§2.2"
+          ],
+          "acceptable": [
+            "payments-ops§3.2"
+          ],
+          "expected_impact": "conflict"
+        },
+        {
+          "regulation": "real-03-rbi-customer-liability-2017",
+          "requirement": "R4",
+          "predicted": {
+            "payments-ops§3.3": "gap",
+            "payments-ops§3.2": "gap"
+          },
+          "relevant": [
+            "payments-ops§3.2"
+          ],
+          "acceptable": [
+            "payments-ops§3.1"
+          ],
+          "expected_impact": "gap"
+        },
+        {
+          "regulation": "real-03-rbi-customer-liability-2017",
+          "requirement": "R5",
+          "predicted": {
+            "payments-ops§3.3": "gap",
+            "payments-ops§3.2": "gap"
+          },
+          "relevant": [
+            "payments-ops§3.3"
+          ],
+          "acceptable": [],
+          "expected_impact": "conflict"
+        },
+        {
+          "regulation": "real-03-rbi-customer-liability-2017",
+          "requirement": "R6",
+          "predicted": {
+            "payments-ops§3.3": "conflict"
+          },
+          "relevant": [
+            "payments-ops§3.3"
+          ],
+          "acceptable": [],
+          "expected_impact": "conflict"
+        },
+        {
+          "regulation": "real-04-rbi-failed-transactions-tat-2019",
+          "requirement": "R1",
+          "predicted": {
+            "customer-grievance§4.1": "gap"
+          },
+          "relevant": [
+            "customer-grievance§4.2"
+          ],
+          "acceptable": [
+            "customer-grievance§4.1"
+          ],
+          "expected_impact": "conflict"
+        },
+        {
+          "regulation": "real-04-rbi-failed-transactions-tat-2019",
+          "requirement": "R2",
+          "predicted": {
+            "customer-grievance§4.1": "conflict"
+          },
+          "relevant": [
+            "customer-grievance§4.1"
+          ],
+          "acceptable": [
+            "customer-grievance§4.2"
+          ],
+          "expected_impact": "conflict"
+        },
+        {
+          "regulation": "real-04-rbi-failed-transactions-tat-2019",
+          "requirement": "R3",
+          "predicted": {
+            "customer-grievance§4.1": "conflict"
+          },
+          "relevant": [],
+          "acceptable": [],
+          "expected_impact": "not_applicable"
+        },
+        {
+          "regulation": "real-05-rbi-digital-payment-security-2021",
+          "requirement": "R1",
+          "predicted": {
+            "info-security§2.1": "gap"
+          },
+          "relevant": [
+            "info-security§2.2"
+          ],
+          "acceptable": [],
+          "expected_impact": "conflict"
+        },
+        {
+          "regulation": "real-05-rbi-digital-payment-security-2021",
+          "requirement": "R2",
+          "predicted": {
+            "payments-ops§4.1": "gap"
+          },
+          "relevant": [
+            "payments-ops§4.1"
+          ],
+          "acceptable": [
+            "info-security§2.2"
+          ],
+          "expected_impact": "conflict"
+        },
+        {
+          "regulation": "real-05-rbi-digital-payment-security-2021",
+          "requirement": "R3",
+          "predicted": {
+            "customer-grievance§4.1": "gap"
+          },
+          "relevant": [
+            "info-security§2.2"
+          ],
+          "acceptable": [
+            "info-security§2.1"
+          ],
+          "expected_impact": "gap"
+        },
+        {
+          "regulation": "real-05-rbi-digital-payment-security-2021",
+          "requirement": "R4",
+          "predicted": {
+            "info-security§2.2": "gap"
+          },
+          "relevant": [
+            "payments-ops§3.2"
+          ],
+          "acceptable": [],
+          "expected_impact": "aligned"
+        },
+        {
+          "regulation": "real-05-rbi-digital-payment-security-2021",
+          "requirement": "R5",
+          "predicted": {
+            "data-privacy§5.2": "gap",
+            "payments-ops§3.1": "gap"
+          },
+          "relevant": [
+            "payments-ops§3.1"
+          ],
+          "acceptable": [
+            "info-security§5.1"
+          ],
+          "expected_impact": "conflict"
+        },
+        {
+          "regulation": "real-05-rbi-digital-payment-security-2021",
+          "requirement": "R6",
+          "predicted": {
+            "customer-grievance§3.1": "conflict",
+            "info-security§6.2": "aligned"
+          },
+          "relevant": [
+            "payments-ops§4.2"
+          ],
+          "acceptable": [
+            "payments-ops§3.1"
+          ],
+          "expected_impact": "gap"
+        },
+        {
+          "regulation": "real-05-rbi-digital-payment-security-2021",
+          "requirement": "R7",
+          "predicted": {
+            "info-security§3.2": "gap"
+          },
+          "relevant": [
+            "info-security§3.2"
+          ],
+          "acceptable": [
+            "info-security§3.1"
+          ],
+          "expected_impact": "aligned"
+        },
+        {
+          "regulation": "real-06-rbi-kyc-master-direction",
+          "requirement": "R1",
+          "predicted": {
+            "kyc-aml§3.1": "gap",
+            "kyc-aml§3.2": "gap"
+          },
+          "relevant": [
+            "kyc-aml§3.1"
+          ],
+          "acceptable": [],
+          "expected_impact": "aligned"
+        },
+        {
+          "regulation": "real-06-rbi-kyc-master-direction",
+          "requirement": "R2",
+          "predicted": {
+            "kyc-aml§3.1": "gap",
+            "payments-ops§5.1": "gap"
+          },
+          "relevant": [
+            "kyc-aml§3.1"
+          ],
+          "acceptable": [],
+          "expected_impact": "gap"
+        },
+        {
+          "regulation": "real-06-rbi-kyc-master-direction",
+          "requirement": "R3",
+          "predicted": {
+            "kyc-aml§2.2": "gap",
+            "data-privacy§4.1": "gap"
+          },
+          "relevant": [
+            "data-privacy§4.1",
+            "kyc-aml§2.2"
+          ],
+          "acceptable": [],
+          "expected_impact": "conflict"
+        },
+        {
+          "regulation": "real-06-rbi-kyc-master-direction",
+          "requirement": "R4",
+          "predicted": {
+            "kyc-aml§3.2": "gap",
+            "kyc-aml§2.1": "gap"
+          },
+          "relevant": [
+            "kyc-aml§3.2"
+          ],
+          "acceptable": [
+            "kyc-aml§2.1"
+          ],
+          "expected_impact": "gap"
+        },
+        {
+          "regulation": "real-06-rbi-kyc-master-direction",
+          "requirement": "R5",
+          "predicted": {
+            "kyc-aml§6.1": "gap"
+          },
+          "relevant": [
+            "kyc-aml§6.1"
+          ],
+          "acceptable": [],
+          "expected_impact": "aligned"
+        }
+      ]
+    }
+  ]
+}

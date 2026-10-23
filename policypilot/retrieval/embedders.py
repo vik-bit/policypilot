@@ -85,9 +85,14 @@ class FastEmbedder:
     def fit(self, texts: list[str]) -> None:  # neural models are pre-trained; nothing to fit
         return None
 
+    # fastembed's default batch is 256 texts. Long clauses are padded to 512 tokens, and attention
+    # memory grows with batch x length^2, so 10,000 long clauses at batch 256 used 6.9 GB and were
+    # killed on an 8 GB machine. 32 keeps memory small at no real cost in speed.
+    BATCH_SIZE = 32
+
     def embed_documents(self, texts: list[str]) -> np.ndarray:
         fn = getattr(self.model, "passage_embed", self.model.embed)
-        return _l2(np.array(list(fn(texts)), dtype=np.float32))
+        return _l2(np.array(list(fn(texts, batch_size=self.BATCH_SIZE)), dtype=np.float32))
 
     def embed_query(self, text: str) -> np.ndarray:
         fn = getattr(self.model, "query_embed", self.model.embed)

@@ -15,7 +15,7 @@ os.environ["PP_RERANK"] = "off"
 @pytest.fixture(scope="session")
 def settings(tmp_path_factory) -> Settings:
     data = tmp_path_factory.mktemp("data")
-    for sub in ("policies", "regulations", "eval", "sample_reports"):
+    for sub in ("policies", "regulations", "regulations_real", "regulations_adversarial", "eval", "sample_reports"):
         shutil.copytree(PROJECT_ROOT / "data" / sub, data / sub)
     s = Settings()
     s.data_dir = Path(data)
