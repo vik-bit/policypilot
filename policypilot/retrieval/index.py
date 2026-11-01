@@ -63,7 +63,8 @@ def _make_ann(vectors: np.ndarray):
 
 class PolicyIndex:
     def __init__(self, clauses: list[Clause], embedder: Embedder, vectors: np.ndarray,
-                 reranker: CrossEncoderReranker | None = None, dense_backend: str = "exact"):
+                 reranker: CrossEncoderReranker | None = None, dense_backend: str = "exact",
+                 rerank_depth: int = RERANK_DEPTH):
         if dense_backend not in ("exact", "vecdex"):
             raise ValueError(f"dense_backend must be 'exact' or 'vecdex', got {dense_backend!r}")
         self.clauses = clauses
@@ -72,6 +73,7 @@ class PolicyIndex:
         self.vectors = vectors
         self.reranker = reranker
         self.dense_backend = dense_backend
+        self.rerank_depth = rerank_depth
         self.ann = _make_ann(vectors) if dense_backend == "vecdex" and len(clauses) else None
         self.bm25 = BM25().fit([tokenize(_search_text(c)) for c in clauses])
 
@@ -92,7 +94,8 @@ class PolicyIndex:
         if not force and manifest.exists() and vec_path.exists():
             meta = json.loads(manifest.read_text(encoding="utf-8"))
             if meta.get("fingerprint") == fp and meta.get("count") == len(clauses):
-                return cls(clauses, embedder, np.load(vec_path), reranker, settings.dense_backend)
+                return cls(clauses, embedder, np.load(vec_path), reranker, settings.dense_backend,
+                           settings.rerank_depth)
 
         vectors = embedder.embed_documents(texts) if texts else np.zeros((0, 1), dtype=np.float32)
         idx_dir.mkdir(parents=True, exist_ok=True)
@@ -103,7 +106,7 @@ class PolicyIndex:
             "fingerprint": fp, "count": len(clauses), "embedder": embedder.name,
             "reranker": reranker.name if reranker else None,
         }, indent=2), encoding="utf-8")
-        return cls(clauses, embedder, vectors, reranker, settings.dense_backend)
+        return cls(clauses, embedder, vectors, reranker, settings.dense_backend, settings.rerank_depth)
 
     # ------------------------------------------------------------------ queries
     def get(self, clause_id: str) -> Clause | None:
@@ -146,9 +149,11 @@ class PolicyIndex:
             fused = {i: sum(1 / (RRF_K + r) for r in rr.values()) for i, rr in ranks.items()}
             scored = sorted(fused.items(), key=lambda kv: -kv[1])
             if method == "hybrid+rerank" and self.reranker:
-                top = scored[:RERANK_DEPTH]
+                # Only the top candidates are re-read; the rest keep their fused order below them,
+                # so asking for more than rerank_depth results still returns k hits.
+                top, rest = scored[:self.rerank_depth], scored[self.rerank_depth:]
                 ce = self.reranker.scores(query, [_search_text(self.clauses[i]) for i, _ in top])
-                scored = sorted(zip([i for i, _ in top], ce), key=lambda kv: -kv[1])
+                scored = sorted(zip([i for i, _ in top], ce), key=lambda kv: -kv[1]) + rest
             elif method == "hybrid+rerank":
                 method = "hybrid"
 
