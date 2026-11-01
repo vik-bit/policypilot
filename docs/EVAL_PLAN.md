@@ -89,6 +89,32 @@ from SEC filings) as distractors. For each size the benchmark reports retrieval 
 on the `sample` labels, plus p50 and p95 latency per search method. It is a measurement, with no
 pass bar.
 
+## Reranker ablation
+
+_Added on 1 November 2026, before any of the configurations below was run._
+
+The scale benchmark showed the cross-encoder reranker costing about 2 s per search at 10,051
+clauses, and it did not raise recall@3 there. This ablation decides whether search should keep
+it. It is retrieval only: no LLM is called.
+
+**Configurations.** Hybrid with no reranker; and three fastembed cross-encoders
+(`Xenova/ms-marco-MiniLM-L-6-v2`, the current default; `Xenova/ms-marco-MiniLM-L-12-v2`;
+`BAAI/bge-reranker-base`), each re-reading the top 20 fused candidates (current) or only the top 5.
+Seven configurations in all.
+
+**Decision data.** The `sample` requirements at four library sizes (51, 1,051, 5,051 and 10,051
+clauses, the scale benchmark's distractors). Score = recall@3 averaged over the four sizes, each
+size weighted equally. Latency = p50 per search at 10,051 clauses.
+
+**Rule.** Take the best score. Of the configurations within 0.04 of it (one requirement out of 25),
+the one with the lowest latency becomes the default. 0.04 is used because a smaller gap is less
+than one requirement and well inside the bootstrap intervals.
+
+**Not used for the decision.** The `real` and `adversarial` suites are scored and reported for every
+configuration. The `real` set cannot act as a clean held-out check here: its hybrid vs. rerank
+numbers (89% vs. 86% recall@3) were already seen and helped prompt this ablation. The saved agent
+results were measured with the old default and are not re-run.
+
 ## Not covered yet
 
 - **100+ requirements.** The two sets together have 60 applicable requirements. Reaching 100
@@ -103,3 +129,4 @@ pass bar.
 | Date | Change | Reason |
 |---|---|---|
 | 23 Oct 2026 | First version | — |
+| 1 Nov 2026 | Added the [reranker ablation](#reranker-ablation) and its decision rule | The scale benchmark showed the reranker was slow and did not help recall at 10,051 clauses; the rule is fixed before the run |
