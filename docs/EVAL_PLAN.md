@@ -69,7 +69,7 @@ of the 95% interval clears the bar, not just the point estimate.
 
 | Metric | Bar | Why this level |
 |---|---|---|
-| Retrieval recall@3 (hybrid + rerank) | ≥ 0.80 | The agent can only judge clauses that search surfaces. |
+| Retrieval recall@3 (default search: hybrid, no rerank since 1 Nov 2026) | ≥ 0.80 | The agent can only judge clauses that search surfaces. |
 | Agent precision | ≥ 0.85 | A reviewer must be able to trust that flagged clauses matter. |
 | Agent recall | ≥ 0.80 | Missing an affected clause is the costliest error in compliance. |
 | Agent impact accuracy | ≥ 0.75 | The label decides whether a rewrite is drafted at all. |
@@ -115,6 +115,12 @@ configuration. The `real` set cannot act as a clean held-out check here: its hyb
 numbers (89% vs. 86% recall@3) were already seen and helped prompt this ablation. The saved agent
 results were measured with the old default and are not re-run.
 
+**Outcome (1 Nov 2026).** Best score: `bge-reranker-base` at top 20, 92%, at 15.5 s per search.
+Hybrid with no reranker scored 89% at 116 ms, the fastest within the margin, so it became the
+default (`PP_RERANK=off`). The old default, L-6 at top 20, scored 87% at 3.1 s and was the only
+configuration outside the margin. The cost: on the 51-clause library alone, no reranker finds one
+fewer requirement in the top 3 (92% vs. 96%). Full tables: [RERANK_ABLATION.md](RERANK_ABLATION.md).
+
 ## Not covered yet
 
 - **100+ requirements.** The two sets together have 60 applicable requirements. Reaching 100
@@ -130,3 +136,4 @@ results were measured with the old default and are not re-run.
 |---|---|---|
 | 23 Oct 2026 | First version | — |
 | 1 Nov 2026 | Added the [reranker ablation](#reranker-ablation) and its decision rule | The scale benchmark showed the reranker was slow and did not help recall at 10,051 clauses; the rule is fixed before the run |
+| 1 Nov 2026 | Default search changed to hybrid with no reranker; the retrieval pass bar now names the default method | Outcome of the reranker ablation under its pre-registered rule. Saved agent results (`EVAL_RESULTS*.md`) were measured with the old default |

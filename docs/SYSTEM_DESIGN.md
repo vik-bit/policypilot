@@ -165,7 +165,7 @@ blurs. We do both and merge the results.
 | BM25 | Classic keyword ranking (implemented from scratch, ~60 lines) | Exact terms, acronyms, section numbers |
 | Dense | Embeddings + cosine similarity. Uses `fastembed` (`BAAI/bge-small-en-v1.5`, ONNX, CPU) when installed; otherwise a built-in hashed character n-gram TF-IDF vectoriser so it always works offline | Paraphrases, synonyms |
 | Fusion | **Reciprocal Rank Fusion**: `score = Σ 1/(60 + rank)` across both lists | Merges rankings without needing comparable scores |
-| Rerank (optional) | Cross-encoder (`fastembed` `Xenova/ms-marco-MiniLM-L-6-v2`) re-scores the top 20 | Reads query and clause *together*; more accurate than either index alone |
+| Rerank (optional, off by default since the [ablation](RERANK_ABLATION.md)) | Cross-encoder (`fastembed` `Xenova/ms-marco-MiniLM-L-6-v2`) re-scores the top 20 | Reads query and clause *together*; more accurate than either index alone |
 
 Index persisted to `data/index/` (`clauses.json`, `bm25.json`, `vectors.npy`). Rebuilt with
 `python -m policypilot ingest`.

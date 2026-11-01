@@ -42,7 +42,7 @@ Pick a regulation, click **Run analysis**, and get a report you can review and e
 | Step | What happens | Under the hood |
 |---|---|---|
 | **1. Read** | The regulation is split into numbered requirements (R1, R2…) | Document parsing |
-| **2. Search** | Each requirement is matched against every policy clause, by **exact words** and by **meaning** | Hybrid retrieval: BM25 + embeddings → Reciprocal Rank Fusion → cross-encoder rerank |
+| **2. Search** | Each requirement is matched against every policy clause, by **exact words** and by **meaning** | Hybrid retrieval: BM25 + embeddings → Reciprocal Rank Fusion (cross-encoder rerank optional, off by default) |
 | **3. Assess** | The AI agent decides what to search for, reads clauses, labels each one **Needs change**, **Missing from policy** or **Already compliant**, and drafts new wording | Tool-calling agent loop (search / read / submit) |
 | **4. Verify** | Code checks every quote exists word for word. Failures go back to the agent with the closest real sentence | Deterministic verifier + self-correction loop |
 | **5. Decide** | You compare old and new wording side by side, approve or reject, and export | Human in the loop |
@@ -130,6 +130,19 @@ statistics and pass bars in advance.
   Hybrid without it holds 86% in 0.11 s, about 20 times faster. The real-regulation set points the same way
   (89% without, 86% with). Embedding the large library also exposed a memory bug: fastembed's
   default batch used 6.9 GB and was killed. A smaller batch fixed it (3.5 GB peak).
+- **Reranker ablation** ([RERANK_ABLATION.md](docs/RERANK_ABLATION.md)). To settle it, I wrote a
+  decision rule into the [eval plan](docs/EVAL_PLAN.md#reranker-ablation) first, then tested seven
+  setups: no reranker, or one of three cross-encoders re-reading the top 20 or top 5 results.
+
+  | Setup | Recall@3, mean of 4 library sizes | Search time p50 at 10,051 clauses |
+  |---|---|---|
+  | bge-reranker-base, top 20 (best) | 92% | 15.5 s |
+  | MiniLM-L-6, top 20 (old default) | 87% | 3.1 s |
+  | **Hybrid, no reranker (new default)** | **89%** | **0.12 s** |
+
+  No reranker is within one requirement of the best and 26 times faster than the old default, so it
+  is now the default (`PP_RERANK=off`). It does cost one requirement on the 51-clause library
+  (92% vs. 96%). The search and agent numbers above were measured with the old default.
 
 ---
 
@@ -267,8 +280,9 @@ policypilot/
   company policies, 100+ requirements and several reviewers.
 - **The agent has not yet been scored on the real or adversarial sets.** That needs API credits:
   `eval --suite real --agent-runs 3`.
-- **The reranker needs rethinking** for large libraries: it is the slowest step and hurt recall
-  once distractors were added.
+- **The reranker is off by default** after the ablation above. The 25-requirement decision set is
+  small: the gap to the best reranker (89% vs. 92%) is under one requirement per library size, so a
+  larger labelled set could change the answer.
 - **The fact-checker proves a quote exists, not that the interpretation is right.** That's why a human
   approves every change.
 - **Next:** analyse only what changed between versions of a regulation; prompt caching to cut cost;
