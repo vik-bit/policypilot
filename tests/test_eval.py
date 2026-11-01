@@ -98,3 +98,19 @@ def test_saved_sample_results_still_match_the_published_numbers(settings):
     assert ci["precision"]["value"] == pytest.approx(agent["precision"])
     assert ci["recall"]["value"] == pytest.approx(agent["recall"])
     assert ci["impact_accuracy"]["value"] == pytest.approx(agent["impact_accuracy"])
+
+
+def test_rerank_ablation_rule_picks_fastest_config_near_the_best():
+    from policypilot.eval.rerank_ablation import choose
+
+    rows = [{"name": "none", "score": 0.86, "latency": 110},
+            {"name": "small", "score": 0.89, "latency": 2300},
+            {"name": "big", "score": 0.95, "latency": 9000},
+            {"name": "mid", "score": 0.92, "latency": 4000}]
+    best, eligible, chosen = choose(rows, margin=0.04)
+    assert best == 0.95
+    assert [r["name"] for r in eligible] == ["big", "mid"]
+    assert chosen["name"] == "mid"
+    # A gap of exactly one requirement still counts as a tie.
+    assert choose([{"name": "a", "score": 0.84, "latency": 1},
+                   {"name": "b", "score": 0.88, "latency": 5}])[2]["name"] == "a"

@@ -39,6 +39,7 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser("stats")
     sc = sub.add_parser("scale"); sc.add_argument("--sizes", type=int, nargs="+", default=[0, 1000, 5000, 10000],
                                                   help="numbers of distractor clauses to add")
+    sub.add_parser("ablate-rerank", help="compare reranker settings on every suite (retrieval only, no LLM calls)")
     v = sub.add_parser("serve"); v.add_argument("--port", type=int, default=8000); v.add_argument("--host", default="127.0.0.1")
     args = p.parse_args(argv)
 
@@ -115,6 +116,13 @@ def main(argv: list[str] | None = None) -> int:
 
         print(run_scale(settings, args.sizes))
         print("Written to docs/SCALE_RESULTS.md")
+        return 0
+
+    if args.cmd == "ablate-rerank":
+        from .eval.rerank_ablation import run as run_ablation
+
+        print(run_ablation(settings))
+        print("Written to docs/RERANK_ABLATION.md")
         return 0
     return 1
 
