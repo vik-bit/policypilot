@@ -13,11 +13,14 @@ on first use and cached in data/bench/, which is not committed.
 
 from __future__ import annotations
 
+import hashlib
 import json
 import time
 import urllib.request
 from datetime import date
 from pathlib import Path
+
+import numpy as np
 
 from ..config import PROJECT_ROOT, Settings
 from ..ingest import load_policies
@@ -85,19 +88,39 @@ def _distractors_in_top3(index: PolicyIndex, settings: Settings) -> float:
     return taken / max(total, 1)
 
 
-def run(settings: Settings, sizes: list[int]) -> str:
+def embed_library(settings: Settings, max_distractors: int):
+    """Policy clauses plus distractors, with their vectors.
+
+    Embedding 10,000 clauses takes about 35 minutes on a laptop CPU, so the vectors are cached in
+    data/bench/ under a hash of the embedder name and every clause text; any change re-embeds.
+    Returns (embedder, policy_clauses, clauses, vectors, seconds spent embedding or None if cached).
+    """
     embedder = make_embedder(settings.embedder, settings.embed_model)
-    reranker = make_reranker(settings.rerank, settings.rerank_model)
     policy_clauses = load_policies(settings.policies_dir)
-    distractors = load_distractors(settings.data_dir / "bench", max(sizes))
+    distractors = load_distractors(settings.data_dir / "bench", max_distractors)
     clauses = policy_clauses + distractors
     texts = [_search_text(c) for c in clauses]
     embedder.fit(texts)
 
+    key = hashlib.sha256(embedder.name.encode())
+    for text in texts:
+        key.update(hashlib.sha256(text.encode()).digest())
+    cache = settings.data_dir / "bench" / f"vectors-{key.hexdigest()[:16]}.npy"
+    if cache.exists():
+        print(f"Using cached vectors for {len(texts):,} clauses ({cache.name})", flush=True)
+        return embedder, policy_clauses, clauses, np.load(cache), None
+
     print(f"Embedding {len(texts):,} clauses with {embedder.name}…", flush=True)
     started = time.perf_counter()
     vectors = embedder.embed_documents(texts)
-    embed_seconds = time.perf_counter() - started
+    seconds = time.perf_counter() - started
+    np.save(cache, vectors)
+    return embedder, policy_clauses, clauses, vectors, seconds
+
+
+def run(settings: Settings, sizes: list[int]) -> str:
+    reranker = make_reranker(settings.rerank, settings.rerank_model)
+    embedder, policy_clauses, clauses, vectors, embed_seconds = embed_library(settings, max(sizes))
 
     rows = []
     for n in sorted(sizes):
@@ -114,7 +137,7 @@ def run(settings: Settings, sizes: list[int]) -> str:
         print(f"  {size:>6,} clauses: recall@3 {best['recall@3']:.2f}, p95 {best['ms_p95']:.0f} ms", flush=True)
 
     results = {"embedder": embedder.name, "reranker": reranker.name if reranker else None,
-               "embed_seconds": embed_seconds, "embedded_clauses": len(texts), "rows": rows}
+               "embed_seconds": embed_seconds, "embedded_clauses": len(clauses), "rows": rows}
     (settings.data_dir / "eval" / "scale_results.json").write_text(json.dumps(results, indent=2), encoding="utf-8")
     md = write_markdown(results)
     (PROJECT_ROOT / "docs" / "SCALE_RESULTS.md").write_text(md, encoding="utf-8")
@@ -156,8 +179,12 @@ def write_markdown(results: dict) -> str:
         lines.append(f"| {r['clauses']:,} | " + " | ".join(
             f"{r['methods'][m]['ms_p50']:.0f} / {r['methods'][m]['ms_p95']:.0f}" for m in methods)
             + f" | {r['index_build_seconds']:.1f} s |")
-    per_1k = 1000 * results["embed_seconds"] / results["embedded_clauses"]
-    lines += ["", f"Embedding the {results['embedded_clauses']:,} clauses once took {results['embed_seconds']:.0f} s "
-              f"({per_1k:.1f} s per 1,000 clauses). In the app this is paid once per library change, because "
-              f"vectors are cached in `data/index/`; this benchmark re-embeds on every run.", ""]
+    if results["embed_seconds"] is not None:
+        per_1k = 1000 * results["embed_seconds"] / results["embedded_clauses"]
+        lines += ["", f"Embedding the {results['embedded_clauses']:,} clauses once took {results['embed_seconds']:.0f} s "
+                  f"({per_1k:.1f} s per 1,000 clauses). In the app this is paid once per library change, because "
+                  f"vectors are cached in `data/index/`; this benchmark caches them in `data/bench/`.", ""]
+    else:
+        lines += ["", f"The {results['embedded_clauses']:,} clause vectors came from the cache in `data/bench/`, "
+                  "so this run did not time embedding.", ""]
     return "\n".join(lines)
