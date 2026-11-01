@@ -57,11 +57,11 @@ def percentile(values: list[float], q: float) -> float:
 
 
 def eval_retrieval(index: PolicyIndex, settings: Settings, ks=(1, 3, 5),
-                   suite: str = "sample") -> dict[str, dict]:
+                   suite: str = "sample", methods: tuple[str, ...] = METHODS) -> dict[str, dict]:
     regs = {r.id: r for r in load_regulations(suite_regulations_dir(settings, suite))}
     # Requirements that apply to no clause have nothing to retrieve; abstention is scored end to end.
     labels = [lab for lab in load_labels(settings, suite) if lab["relevant"]]
-    methods = [m for m in METHODS if m != "hybrid+rerank" or index.reranker]
+    methods = [m for m in methods if m != "hybrid+rerank" or index.reranker]
     results: dict[str, dict] = {}
     for method in methods:
         recalls = defaultdict(list)

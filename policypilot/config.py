@@ -54,9 +54,12 @@ class Settings:
     # embedder: "auto" (fastembed if installed, else hashing), "fastembed", or "hashing"
     embedder: str = field(default_factory=lambda: _env("PP_EMBEDDER", "auto"))
     embed_model: str = field(default_factory=lambda: _env("PP_EMBED_MODEL", "BAAI/bge-small-en-v1.5"))
-    # rerank: "auto" (cross-encoder if fastembed is installed), "on", or "off"
-    rerank: str = field(default_factory=lambda: _env("PP_RERANK", "auto"))
+    # rerank: "off" (default; see docs/RERANK_ABLATION.md), "auto" (cross-encoder if fastembed is
+    # installed), or "on"
+    rerank: str = field(default_factory=lambda: _env("PP_RERANK", "off"))
     rerank_model: str = field(default_factory=lambda: _env("PP_RERANK_MODEL", "Xenova/ms-marco-MiniLM-L-6-v2"))
+    # how many fused candidates the cross-encoder re-reads; each one adds CPU time to every search
+    rerank_depth: int = field(default_factory=lambda: int(_env("PP_RERANK_DEPTH", "20")))
     # dense_backend: "exact" (compare the query with every clause) or "vecdex" (HNSW graph search
     # from the vecdex package, for libraries too large to scan)
     dense_backend: str = field(default_factory=lambda: _env("PP_DENSE_BACKEND", "exact").lower())

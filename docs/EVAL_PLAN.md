@@ -69,7 +69,7 @@ of the 95% interval clears the bar, not just the point estimate.
 
 | Metric | Bar | Why this level |
 |---|---|---|
-| Retrieval recall@3 (hybrid + rerank) | ≥ 0.80 | The agent can only judge clauses that search surfaces. |
+| Retrieval recall@3 (default search: hybrid, no rerank since 1 Nov 2026) | ≥ 0.80 | The agent can only judge clauses that search surfaces. |
 | Agent precision | ≥ 0.85 | A reviewer must be able to trust that flagged clauses matter. |
 | Agent recall | ≥ 0.80 | Missing an affected clause is the costliest error in compliance. |
 | Agent impact accuracy | ≥ 0.75 | The label decides whether a rewrite is drafted at all. |
@@ -89,6 +89,38 @@ from SEC filings) as distractors. For each size the benchmark reports retrieval 
 on the `sample` labels, plus p50 and p95 latency per search method. It is a measurement, with no
 pass bar.
 
+## Reranker ablation
+
+_Added on 1 November 2026, before any of the configurations below was run._
+
+The scale benchmark showed the cross-encoder reranker costing about 2 s per search at 10,051
+clauses, and it did not raise recall@3 there. This ablation decides whether search should keep
+it. It is retrieval only: no LLM is called.
+
+**Configurations.** Hybrid with no reranker; and three fastembed cross-encoders
+(`Xenova/ms-marco-MiniLM-L-6-v2`, the current default; `Xenova/ms-marco-MiniLM-L-12-v2`;
+`BAAI/bge-reranker-base`), each re-reading the top 20 fused candidates (current) or only the top 5.
+Seven configurations in all.
+
+**Decision data.** The `sample` requirements at four library sizes (51, 1,051, 5,051 and 10,051
+clauses, the scale benchmark's distractors). Score = recall@3 averaged over the four sizes, each
+size weighted equally. Latency = p50 per search at 10,051 clauses.
+
+**Rule.** Take the best score. Of the configurations within 0.04 of it (one requirement out of 25),
+the one with the lowest latency becomes the default. 0.04 is used because a smaller gap is less
+than one requirement and well inside the bootstrap intervals.
+
+**Not used for the decision.** The `real` and `adversarial` suites are scored and reported for every
+configuration. The `real` set cannot act as a clean held-out check here: its hybrid vs. rerank
+numbers (89% vs. 86% recall@3) were already seen and helped prompt this ablation. The saved agent
+results were measured with the old default and are not re-run.
+
+**Outcome (1 Nov 2026).** Best score: `bge-reranker-base` at top 20, 92%, at 15.5 s per search.
+Hybrid with no reranker scored 89% at 116 ms, the fastest within the margin, so it became the
+default (`PP_RERANK=off`). The old default, L-6 at top 20, scored 87% at 3.1 s and was the only
+configuration outside the margin. The cost: on the 51-clause library alone, no reranker finds one
+fewer requirement in the top 3 (92% vs. 96%). Full tables: [RERANK_ABLATION.md](RERANK_ABLATION.md).
+
 ## Not covered yet
 
 - **100+ requirements.** The two sets together have 60 applicable requirements. Reaching 100
@@ -103,3 +135,5 @@ pass bar.
 | Date | Change | Reason |
 |---|---|---|
 | 23 Oct 2026 | First version | — |
+| 1 Nov 2026 | Added the [reranker ablation](#reranker-ablation) and its decision rule | The scale benchmark showed the reranker was slow and did not help recall at 10,051 clauses; the rule is fixed before the run |
+| 1 Nov 2026 | Default search changed to hybrid with no reranker; the retrieval pass bar now names the default method | Outcome of the reranker ablation under its pre-registered rule. Saved agent results (`EVAL_RESULTS*.md`) were measured with the old default |

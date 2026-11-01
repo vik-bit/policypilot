@@ -43,3 +43,30 @@ def test_index_is_cached_between_builds(settings, index):
     again = PolicyIndex.build(settings)
     assert [c.id for c in again.clauses] == [c.id for c in index.clauses]
     assert (settings.index_dir / "manifest.json").exists()
+
+
+class _ReverseReranker:
+    """Scores documents in the reverse of the order it receives them."""
+
+    name = "fake"
+
+    def __init__(self):
+        self.calls = []
+
+    def scores(self, query, documents):
+        self.calls.append(len(documents))
+        return [float(-i) for i in range(len(documents))][::-1]
+
+
+def test_rerank_only_reorders_the_top_candidates(index):
+    from policypilot.retrieval import PolicyIndex
+
+    reranker = _ReverseReranker()
+    shallow = PolicyIndex(index.clauses, index.embedder, index.vectors, reranker, rerank_depth=3)
+    fused = [h.clause.id for h in index.search("data retention", k=8, method="hybrid")]
+    reranked = [h.clause.id for h in shallow.search("data retention", k=8, method="hybrid+rerank")]
+
+    assert reranker.calls == [3]
+    assert reranked[:3] == fused[:3][::-1]
+    # Asking for more hits than the rerank depth still returns k, in fused order after the top.
+    assert reranked[3:] == fused[3:]
