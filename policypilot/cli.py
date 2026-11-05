@@ -8,12 +8,15 @@
     stats               confidence intervals and significance tests from the saved results
     scale               how search quality and speed change as the policy library grows
     serve               start the web app on http://localhost:8000
+    mcp                 run as an MCP server for Claude Desktop, Claude Code or any MCP client
+    mcp-bench           measure each MCP tool's latency over stdio (writes docs/MCP_RESULTS.md)
 """
 
 from __future__ import annotations
 
 import argparse
 import logging
+import os
 import sys
 from pathlib import Path
 
@@ -41,6 +44,11 @@ def main(argv: list[str] | None = None) -> int:
                                                   help="numbers of distractor clauses to add")
     sub.add_parser("ablate-rerank", help="compare reranker settings on every suite (retrieval only, no LLM calls)")
     v = sub.add_parser("serve"); v.add_argument("--port", type=int, default=8000); v.add_argument("--host", default="127.0.0.1")
+    m = sub.add_parser("mcp", help="run as a Model Context Protocol server")
+    m.add_argument("--transport", choices=("stdio", "streamable-http"), default="stdio")
+    m.add_argument("--port", type=int, default=8765); m.add_argument("--host", default="127.0.0.1")
+    mb = sub.add_parser("mcp-bench", help="measure MCP tool latency over stdio")
+    mb.add_argument("--repeats", type=int, default=30)
     args = p.parse_args(argv)
 
     settings = get_settings()
@@ -48,13 +56,27 @@ def main(argv: list[str] | None = None) -> int:
         settings.mode = "offline"
 
     if args.cmd == "serve":
-        import os
         import uvicorn
 
         if args.offline:
             os.environ["PP_PROVIDER"] = "offline"
         print(f"PolicyPilot running at http://{args.host}:{args.port}  (mode: {settings.resolved_mode})")
         uvicorn.run("policypilot.api.server:app", host=args.host, port=args.port)
+        return 0
+
+    if args.cmd == "mcp":
+        from .mcp_server import main as run_mcp
+
+        if args.offline:
+            os.environ["PP_PROVIDER"] = "offline"
+        run_mcp(args.transport, args.host, args.port)  # stdout is the protocol channel: print nothing
+        return 0
+
+    if args.cmd == "mcp-bench":
+        from .eval.mcp_bench import run as run_bench
+
+        print(run_bench(settings, repeats=args.repeats))
+        print("Written to docs/MCP_RESULTS.md")
         return 0
 
     from .retrieval import PolicyIndex
