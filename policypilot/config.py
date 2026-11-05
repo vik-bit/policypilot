@@ -81,6 +81,12 @@ class Settings:
         return self.data_dir / "runs"
 
     @property
+    def mcp_db_path(self) -> Path:
+        """SQLite file holding the analyses MCP clients build up and resume (PP_MCP_DB overrides)."""
+        override = os.environ.get("PP_MCP_DB", "").strip()
+        return Path(override) if override else self.data_dir / "mcp" / "analyses.sqlite3"
+
+    @property
     def labels_path(self) -> Path:
         return self.data_dir / "eval" / "labels.jsonl"
 
