@@ -170,5 +170,5 @@ step 5 resubmits it word for word and it is accepted, replacing the first attemp
 than {TRIM} characters and lists longer than 6 items are cut in the results below.
 
 {chr(10).join(steps)}"""
-    OUT.write_text(md, encoding="utf-8")
+    OUT.write_text(md, encoding="utf-8", newline="\n")
     return md
