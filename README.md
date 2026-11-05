@@ -13,7 +13,7 @@ changes, and proves every claim with a quote that is checked automatically.**
 ![License](https://img.shields.io/badge/license-MIT-lightgrey)
 
 [What it does](#what-it-does) · [Results](#results) · [How it works](#how-it-works) ·
-[Run it](#run-it-in-3-minutes) · [System design](docs/SYSTEM_DESIGN.md) · [Plain-English tour](docs/HOW_IT_WORKS.md)
+[Run it](#run-it-in-3-minutes) · [MCP server](#use-it-from-any-mcp-client) · [System design](docs/SYSTEM_DESIGN.md) · [Plain-English tour](docs/HOW_IT_WORKS.md)
 
 <img src="docs/images/report.png" alt="PolicyPilot report: each affected clause shown with the new rule, today's wording, the suggested wording, and a verified-evidence badge" width="900">
 
@@ -31,7 +31,7 @@ the suggested rewrite (green = added, red = removed), and whether every quote wa
 | **The problem** | When regulators publish new rules, compliance teams spend weeks finding which internal policies are now out of date, and rewriting them. AI can read fast but invents things, which is unacceptable in compliance. |
 | **What I built** | A full-stack **agentic RAG** system. An LLM agent searches a policy library, decides what each new rule changes, and drafts new wording. A **deterministic fact-checker** then rejects any quote that isn't word for word in the source, and the agent has to fix it. A human approves every change. |
 | **Result (measured)** | Across 25 hand-labelled requirements: **96%** of correct clauses in the top-3 search results; the AI agent reached **100% precision**, **93% recall** and **96% correct impact labels**, against 85% / 89% / 50% for a no-AI baseline, a gain that is statistically significant (p = 0.0002). Nothing unverified is ever shown as verified. Also tested on 38 requirements from real Indian regulations, against prompt injection, and at 10,000 clauses. [Details ↓](#results) |
-| **Skills shown** | LLM tool use and agent loops · RAG (hybrid search, RRF fusion, cross-encoder reranking) · hallucination control · evaluation design · FastAPI · front-end UX · testing an LLM loop without an API · multi-provider LLM integration |
+| **Skills shown** | LLM tool use and agent loops · RAG (hybrid search, RRF fusion, cross-encoder reranking) · hallucination control · evaluation design · FastAPI · front-end UX · testing an LLM loop without an API · multi-provider LLM integration · MCP server with typed tools and saved, resumable analyses |
 
 ---
 
@@ -226,7 +226,85 @@ in one click (no API keys, uploads off, ~70 MB RAM).
 | `python -m policypilot eval --suite real --agent-runs 3` | Score the held-out real regulations, with 3 agent runs as the plan requires (`--suite adversarial` for the injection set) |
 | `python -m policypilot stats` | Confidence intervals and significance tests from the saved results, with no API calls |
 | `python -m policypilot scale` | Grow the library to 10,000 clauses and measure search quality and speed |
-| `python -m pytest` | Run the 47 tests (no API key or internet needed) |
+| `python -m policypilot mcp` | Run as an MCP server ([below](#use-it-from-any-mcp-client)); `mcp-bench` re-measures its latency |
+| `python -m pytest` | Run the 67 tests (no API key or internet needed) |
+
+---
+
+## Use it from any MCP client
+
+`python -m policypilot mcp` runs PolicyPilot as a [Model Context Protocol](https://modelcontextprotocol.io)
+server (official Python SDK, stdio or Streamable HTTP), so Claude Desktop, Claude Code or any other
+MCP client can call the same search, fact-checker and agent. Code: [`policypilot/mcp_server.py`](policypilot/mcp_server.py).
+
+| Tool | What it does |
+|---|---|
+| `search_clauses` | Hybrid search: BM25 + embeddings fused with RRF (cross-encoder rerank when enabled) |
+| `read_clause` | Full text of one clause |
+| `verify_quote` | The deterministic word-for-word check, against a clause or a saved analysis's regulation |
+| `start_analysis` | Split a regulation into requirements and save a new analysis |
+| `submit_findings` | Fact-check findings and save them; failures come back with the closest real sentence |
+| `get_analysis` / `list_analyses` | Resume a saved analysis: findings, what is verified, which requirements are still uncovered |
+| `remove_finding` | Drop one finding |
+| `map_regulation` | Run the server's own agent in one call (`engine="offline"` by default, `"llm"` for Claude/Groq) |
+
+**Two ways to work.** The client can *be* the agent: it searches, reads and submits findings call by
+call, and the server checks every quote and saves the analysis to SQLite (`data/mcp/analyses.sqlite3`),
+so a closed chat or a restarted server loses nothing; `get_analysis` picks up where it stopped. Or
+`map_regulation` runs PolicyPilot's own agent loop server-side and saves the result the same way.
+
+**Guard rails.** Every argument has a typed JSON schema with length and range limits (query ≤ 500
+characters, k ≤ 10, regulation ≤ 50,000 characters and 60 requirements, ≤ 50 findings per call),
+checked before a tool runs. Only the server can mark a finding verified: the finding schema has no
+`verified` field and rejects unknown ones. Document text comes back only inside JSON string fields,
+the server's instructions tell the client it is data rather than instructions, and `map_regulation`
+reuses the agent prompt that keeps a regulation inside its `<regulation>` block. It calls a paid
+model only when asked with `engine="llm"`.
+
+**Connect it.** After `pip install -r requirements.txt` and `pip install -e .`, from the activated venv:
+
+```bash
+claude mcp add policypilot -- python -m policypilot mcp
+```
+
+or in Claude Desktop's `claude_desktop_config.json` (use the full path to your venv's Python):
+
+```json
+{ "mcpServers": { "policypilot": { "command": "C:/path/to/policypilot/.venv/Scripts/python.exe",
+                                   "args": ["-m", "policypilot", "mcp"] } } }
+```
+
+**A real session**, recorded by `python -m policypilot mcp-bench` through an MCP client over stdio
+(full requests and responses: [docs/MCP_RESULTS.md](docs/MCP_RESULTS.md)):
+
+| # | Call | Result |
+|---|---|---|
+| 1 | `start_analysis {regulation_id: "reg-01-data-protection"}` | `analysis_id: "2f02eeaf8ca5"`, requirements R1–R5, none covered yet |
+| 2 | `search_clauses {query: "how long personal data may be kept", k: 3}` | `data-privacy§5.1`, `§3.3`, `§3.2` (3.2 Data Retention is ranked 1st by meaning, 11th by keywords, 3rd fused) |
+| 3 | `read_clause {clause_id: "data-privacy§3.2"}` | "Customer personal data is retained for ten (10) years after the account is closed. …" |
+| 4 | `submit_findings` R2 → §3.2, conflict, `policy_quote: "Customer data is kept for ten years after closure"` | `rejected: 1`: *policy_quote was not found word for word … Closest actual sentence: "Customer personal data is retained for ten (10) years after the a…"* |
+| 5 | `submit_findings`, same pair, quote copied from the clause | `accepted: 1`, `verified: true`, `submissions: 2` (replaced, not duplicated) |
+| 6 | `get_analysis {analysis_id: "2f02eeaf8ca5"}` | 1 verified finding; `requirements_without_findings: R1, R3, R4, R5` |
+
+**Measured latency per tool**, client side over stdio (request sent → result received), 30 rounds
+(10 for `map_regulation`). Windows 11, 12 logical CPUs, Python 3.12, mcp 2.3.0, 51 clauses,
+bge-small embeddings, reranker off:
+
+| Tool | p50 (ms) | p95 (ms) |
+|---|---|---|
+| `search_clauses` | 156.5 | 239.8 |
+| `read_clause` | 7.6 | 10.1 |
+| `verify_quote` | 10.6 | 17.9 |
+| `start_analysis` | 18.5 | 30.5 |
+| `submit_findings` (1 finding) | 16.6 | 28.7 |
+| `get_analysis` | 10.4 | 17.0 |
+| `list_analyses` | 14.5 | 29.1 |
+| `remove_finding` | 12.0 | 22.8 |
+| `map_regulation` (offline, 5 requirements) | 838.4 | 946.6 |
+
+Not in the table: starting the server and connecting took 4.3 s, and the first call, which loads
+the index and embedding model, 4.4 s. `map_regulation` with `engine="llm"` was not measured; its time
+is the model provider's.
 
 ---
 
@@ -261,14 +339,17 @@ policypilot/
 │   │   ├── prompts.py       ← system prompt + tool schemas
 │   │   └── offline.py       ← no-AI baseline
 │   ├── api/server.py        ← FastAPI: background jobs, search, uploads, decisions
+│   ├── mcp_server.py        ← the same tools over the Model Context Protocol
+│   ├── sessions.py          ← SQLite store for analyses MCP clients resume
 │   ├── web/                 ← UI (HTML/CSS/JS, no build step)
 │   └── eval/
 │       ├── run_eval.py      ← retrieval and end-to-end scoring for each test set
 │       ├── stats.py         ← bootstrap confidence intervals, McNemar test
-│       └── scale.py         ← benchmark with 10,000 distractor clauses
+│       ├── scale.py         ← benchmark with 10,000 distractor clauses
+│       └── mcp_bench.py     ← MCP tool latency over stdio
 ├── data/                    ← policies and sample regulations (fictional), real regulation excerpts, labels
 ├── docs/                    ← system design, eval plan and results, label review, glossary, screenshots
-└── tests/                   ← 47 tests, including both agent loops and injection checks against fake APIs
+└── tests/                   ← 67 tests, including both agent loops, injection checks and the MCP server driven by an MCP client
 ```
 
 ---
