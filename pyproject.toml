@@ -14,6 +14,7 @@ dependencies = [
   "numpy>=1.26",
   "pypdf>=4.0",
   "python-multipart>=0.0.9",
+  "mcp>=2.3,<3",
 ]
 
 [project.optional-dependencies]
