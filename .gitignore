@@ -6,5 +6,6 @@ __pycache__/
 data/index/
 data/runs/
 data/mcp/
+sources.json
 *.egg-info/
 data/bench/

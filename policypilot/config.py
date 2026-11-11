@@ -50,6 +50,16 @@ class Settings:
     # Public demo: turns off policy uploads so visitors can't change the shared library.
     read_only: bool = field(default_factory=lambda: _env("PP_READ_ONLY", "off") == "on")
 
+    # --- external sources (MCP servers the agent may consult) ----------------
+    # "on" lets the AI agent read pages on regulator websites through MCP servers (see
+    # agent/external.py). Off by default: it reaches the internet.
+    sources: str = field(default_factory=lambda: _env("PP_SOURCES", "off").lower())
+    # JSON list of MCP servers; without the file, the official Fetch server limited to regulator sites
+    sources_config: Path = field(default_factory=lambda: Path(_env("PP_SOURCES_CONFIG", str(PROJECT_ROOT / "sources.json"))))
+    sources_max_calls: int = field(default_factory=lambda: int(_env("PP_SOURCES_MAX_CALLS", "8")))
+    sources_max_chars: int = field(default_factory=lambda: int(_env("PP_SOURCES_MAX_CHARS", "12000")))
+    sources_timeout: float = field(default_factory=lambda: float(_env("PP_SOURCES_TIMEOUT", "45")))
+
     # --- retrieval ---------------------------------------------------------
     # embedder: "auto" (fastembed if installed, else hashing), "fastembed", or "hashing"
     embedder: str = field(default_factory=lambda: _env("PP_EMBEDDER", "auto"))

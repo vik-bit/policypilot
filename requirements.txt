@@ -8,6 +8,8 @@ pypdf>=4.0
 python-multipart>=0.0.9
 # MCP server (python -m policypilot mcp); 2.x is the MCPServer API
 mcp>=2.3,<3
+# External sources (PP_SOURCES=on): the official Fetch MCP server, pinned
+mcp-server-fetch==2026.10.28
 # Neural embeddings + re-ranking (CPU, ~150 MB of models downloaded on first run).
 # Optional: without it the app falls back to a built-in hashing embedder.
 fastembed>=0.4

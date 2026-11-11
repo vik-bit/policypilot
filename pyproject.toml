@@ -19,6 +19,7 @@ dependencies = [
 
 [project.optional-dependencies]
 neural = ["fastembed>=0.4"]
+sources = ["mcp-server-fetch==2026.10.28"]
 dev = ["pytest>=8.0", "httpx>=0.27"]
 
 [project.scripts]
