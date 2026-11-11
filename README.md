@@ -13,7 +13,7 @@ changes, and proves every claim with a quote that is checked automatically.**
 ![License](https://img.shields.io/badge/license-MIT-lightgrey)
 
 [What it does](#what-it-does) · [Results](#results) · [How it works](#how-it-works) ·
-[Run it](#run-it-in-3-minutes) · [MCP server](#use-it-from-any-mcp-client) · [System design](docs/SYSTEM_DESIGN.md) · [Plain-English tour](docs/HOW_IT_WORKS.md)
+[Run it](#run-it-in-3-minutes) · [MCP server](#use-it-from-any-mcp-client) · [Regulator sources](#consult-regulator-websites-through-mcp) · [System design](docs/SYSTEM_DESIGN.md) · [Plain-English tour](docs/HOW_IT_WORKS.md)
 
 <img src="docs/images/report.png" alt="PolicyPilot report: each affected clause shown with the new rule, today's wording, the suggested wording, and a verified-evidence badge" width="900">
 
@@ -31,7 +31,7 @@ the suggested rewrite (green = added, red = removed), and whether every quote wa
 | **The problem** | When regulators publish new rules, compliance teams spend weeks finding which internal policies are now out of date, and rewriting them. AI can read fast but invents things, which is unacceptable in compliance. |
 | **What I built** | A full-stack **agentic RAG** system. An LLM agent searches a policy library, decides what each new rule changes, and drafts new wording. A **deterministic fact-checker** then rejects any quote that isn't word for word in the source, and the agent has to fix it. A human approves every change. |
 | **Result (measured)** | Across 25 hand-labelled requirements: **96%** of correct clauses in the top-3 search results; the AI agent reached **100% precision**, **93% recall** and **96% correct impact labels**, against 85% / 89% / 50% for a no-AI baseline, a gain that is statistically significant (p = 0.0002). Nothing unverified is ever shown as verified. Also tested on 38 requirements from real Indian regulations, against prompt injection, and at 10,000 clauses. [Details ↓](#results) |
-| **Skills shown** | LLM tool use and agent loops · RAG (hybrid search, RRF fusion, cross-encoder reranking) · hallucination control · evaluation design · FastAPI · front-end UX · testing an LLM loop without an API · multi-provider LLM integration · MCP server with typed tools and saved, resumable analyses |
+| **Skills shown** | LLM tool use and agent loops · RAG (hybrid search, RRF fusion, cross-encoder reranking) · hallucination control · evaluation design · FastAPI · front-end UX · testing an LLM loop without an API · multi-provider LLM integration · MCP server with typed tools and saved, resumable analyses · MCP client to allowlisted regulator sites |
 
 ---
 
@@ -227,7 +227,8 @@ in one click (no API keys, uploads off, ~70 MB RAM).
 | `python -m policypilot stats` | Confidence intervals and significance tests from the saved results, with no API calls |
 | `python -m policypilot scale` | Grow the library to 10,000 clauses and measure search quality and speed |
 | `python -m policypilot mcp` | Run as an MCP server ([below](#use-it-from-any-mcp-client)); `mcp-bench` re-measures its latency |
-| `python -m pytest` | Run the 67 tests (no API key or internet needed) |
+| `python -m policypilot sources` | List the external MCP sources the agent can consult; `--fetch URL` tries one |
+| `python -m pytest` | Run the 89 tests (no API key or internet needed) |
 
 ---
 
@@ -308,6 +309,37 @@ is the model provider's.
 
 ---
 
+## Consult regulator websites through MCP
+
+With `PP_SOURCES=on`, the AI agent can open the documents a regulation points to (the master
+direction it amends, an FAQ, a parent act) on the regulator's own website while it decides. It
+connects to ready-made MCP servers as a client: by default the MCP project's official
+[Fetch server](https://github.com/modelcontextprotocol/servers/tree/main/src/fetch), allowed only
+onto regulator domains (rbi.org.in, sebi.gov.in, cert-in.org.in, meity.gov.in, federalregister.gov,
+eur-lex.europa.eu and others). Any other MCP server, stdio or Streamable HTTP with auth headers, can
+be added in `sources.json` ([example](sources.example.json)).
+
+- **Guard rails:** each URL is checked against the source's allowlist before any request, with
+  https only and no IP addresses or credentials. Only the tools named in the config are offered.
+  There are at most 8 calls and 12,000 characters per result for each analysis.
+- **Pages are data, not evidence:** results reach the model as untrusted JSON data, and the
+  fact-checker still accepts quotes only from the regulation and the policy clauses, so a quote
+  taken from a web page is rejected.
+- **Audit trail:** every call is shown in the live trace and saved with the report.
+- **Measured** on the real set's own source URLs (11 November 2026, Windows 11): four RBI
+  circulars and master directions came back as text in 1.3 to 8.1 s each (19,252 to 228,090
+  characters). The CERT-In PDF was refused, because the Fetch server cannot read PDFs.
+- **Not measured yet:** whether consulting sources improves accuracy. That needs
+  `eval --suite real` with sources on and off.
+
+Details, numbers and limitations: [docs/EXTERNAL_SOURCES.md](docs/EXTERNAL_SOURCES.md).
+
+```bash
+python -m policypilot sources --fetch "https://rbi.org.in/Scripts/NotificationUser.aspx?Id=11040"
+```
+
+---
+
 ## The problem, in plain English
 
 Banks and payment apps run on rulebooks called **policies**: "we keep customer data for 10 years",
@@ -337,6 +369,8 @@ policypilot/
 │   │   ├── groq_agent.py    ← Groq (OpenAI-style) loop, with retries for malformed model output
 │   │   ├── verifier.py      ← deterministic quote checker
 │   │   ├── prompts.py       ← system prompt + tool schemas
+│   │   ├── external.py      ← MCP client for outside sources (Fetch server, allowlists, budget)
+│   │   ├── htmltext.py      ← regulator HTML pages to plain text
 │   │   └── offline.py       ← no-AI baseline
 │   ├── api/server.py        ← FastAPI: background jobs, search, uploads, decisions
 │   ├── mcp_server.py        ← the same tools over the Model Context Protocol
@@ -349,7 +383,7 @@ policypilot/
 │       └── mcp_bench.py     ← MCP tool latency over stdio
 ├── data/                    ← policies and sample regulations (fictional), real regulation excerpts, labels
 ├── docs/                    ← system design, eval plan and results, label review, glossary, screenshots
-└── tests/                   ← 67 tests, including both agent loops, injection checks and the MCP server driven by an MCP client
+└── tests/                   ← 89 tests, including both agent loops, injection checks, the MCP server driven by an MCP client, and external sources
 ```
 
 ---
