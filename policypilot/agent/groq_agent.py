@@ -16,26 +16,29 @@ from ..config import Settings
 from ..models import Finding, Regulation, TraceEvent, VerificationStats
 from ..retrieval import PolicyIndex
 from .base import AgentError, BaseAgent
-from .prompts import SYSTEM_PROMPT, TOOLS, user_message
+from .prompts import user_message
 from .tools import Emit
 
-# Our tools are written in Anthropic's shape; Groq wants {"type": "function", "function": {...}}.
-GROQ_TOOLS = [
-    {"type": "function", "function": {"name": t["name"], "description": t["description"],
-                                      "parameters": t["input_schema"]}}
-    for t in TOOLS
-]
+
+
+def groq_tools(tools: list[dict]) -> list[dict]:
+    """Our tools are written in Anthropic's shape; Groq wants {"type": "function", "function": {...}}."""
+    return [{"type": "function", "function": {"name": t["name"], "description": t["description"],
+                                              "parameters": t["input_schema"]}} for t in tools]
+
+
 _RETRYABLE = ("tool_use_failed", "output_parse_failed")
 _MAX_RETRIES = 4
-_SYSTEM = SYSTEM_PROMPT + (
+_ALWAYS_TOOLS = (
     "\nAlways act through the tools: call search_policies and read_clause as many times as you need, "
     "then call submit_report. Do not write the report as plain text."
 )
 
 
 class GroqAgent(BaseAgent):
-    def __init__(self, settings: Settings, index: PolicyIndex, emit: Emit, client: groq.Groq | None = None):
-        super().__init__(settings, index, emit)
+    def __init__(self, settings: Settings, index: PolicyIndex, emit: Emit, client: groq.Groq | None = None,
+                 sources=None):
+        super().__init__(settings, index, emit, sources)
         if client is None and not settings.has_groq_key:
             raise AgentError("Groq is selected but no key is set. Add GROQ_API_KEY=<your key> to the .env file "
                              "(get one free at console.groq.com), then restart PolicyPilot.")
@@ -49,7 +52,7 @@ class GroqAgent(BaseAgent):
 
     def _call(self, messages: list[dict[str, Any]]):
         kwargs: dict[str, Any] = dict(
-            model=self.model, messages=messages, tools=GROQ_TOOLS, tool_choice="auto",
+            model=self.model, messages=messages, tools=groq_tools(self.tool_defs), tool_choice="auto",
             temperature=0.2, max_completion_tokens=8192,
         )
         if self.model.startswith("openai/gpt-oss") and self.settings.effort in ("low", "medium", "high"):
@@ -74,7 +77,7 @@ class GroqAgent(BaseAgent):
     # ------------------------------------------------------------------ the loop
     def run(self, regulation: Regulation) -> tuple[str, list[Finding], VerificationStats]:
         messages: list[dict[str, Any]] = [
-            {"role": "system", "content": _SYSTEM},
+            {"role": "system", "content": self.system + _ALWAYS_TOOLS},
             {"role": "user", "content": user_message(regulation)},
         ]
         stats = VerificationStats()

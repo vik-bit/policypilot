@@ -19,7 +19,7 @@ from ..config import Settings
 from ..models import Finding, Regulation, TraceEvent, VerificationStats
 from ..retrieval import PolicyIndex
 from .base import AgentError, BaseAgent
-from .prompts import SYSTEM_PROMPT, TOOLS, user_message
+from .prompts import user_message
 from .tools import Emit
 
 __all__ = ["AgentError", "ClaudeAgent"]
@@ -31,8 +31,8 @@ _FALLBACK_BETA = "server-side-fallback-2026-07-01"
 
 class ClaudeAgent(BaseAgent):
     def __init__(self, settings: Settings, index: PolicyIndex, emit: Emit,
-                 client: anthropic.Anthropic | None = None):
-        super().__init__(settings, index, emit)
+                 client: anthropic.Anthropic | None = None, sources=None):
+        super().__init__(settings, index, emit, sources)
         self.client = client or self._make_client()
 
     @staticmethod
@@ -72,8 +72,8 @@ class ClaudeAgent(BaseAgent):
         kwargs: dict[str, Any] = dict(
             model=self.settings.model,
             max_tokens=16000,
-            system=SYSTEM_PROMPT,
-            tools=TOOLS,
+            system=self.system,
+            tools=self.tool_defs,
             messages=messages,
         )
         if self.settings.effort != "none":

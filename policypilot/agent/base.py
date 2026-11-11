@@ -12,6 +12,7 @@ import json
 from ..config import Settings
 from ..models import Finding, Regulation, TraceEvent, VerificationStats
 from ..retrieval import PolicyIndex
+from .prompts import TOOLS, system_prompt
 from .tools import Emit, PolicyTools
 from .verifier import citation_counts, verify
 
@@ -24,11 +25,15 @@ class AgentError(RuntimeError):
 
 
 class BaseAgent:
-    def __init__(self, settings: Settings, index: PolicyIndex, emit: Emit):
+    def __init__(self, settings: Settings, index: PolicyIndex, emit: Emit, sources=None):
         self.settings = settings
         self.index = index
         self.emit = emit
         self.tools = PolicyTools(index, emit)
+        # Optional ExternalSources (agent/external.py): extra read-only tools from outside MCP servers.
+        self.sources = sources if sources is not None and sources.tools else None
+        self.tool_defs = TOOLS + (self.sources.definitions if self.sources else [])
+        self.system = system_prompt(external=self.sources is not None)
         self.usage = {"input_tokens": 0, "output_tokens": 0, "turns": 0}
         self._last_findings: list[Finding] = []  # most recent verified submission
 
@@ -41,6 +46,8 @@ class BaseAgent:
             return self.tools.read_clause(str(args.get("clause_id", "")))
         if name == "submit_report":
             return self._submit(args, regulation, stats)
+        if self.sources is not None and self.sources.has(name):
+            return self.sources.call(name, args)
         return f"Unknown tool {name}", True
 
     @staticmethod

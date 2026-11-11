@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 import uuid
+from contextlib import nullcontext
 from typing import Callable
 
 from .config import Settings
@@ -19,7 +20,9 @@ Emit = Callable[[TraceEvent], None]
 
 
 def analyze(regulation: Regulation, index: PolicyIndex, settings: Settings,
-            emit: Emit | None = None, client=None, run_id: str | None = None) -> Report:
+            emit: Emit | None = None, client=None, run_id: str | None = None, sources=None) -> Report:
+    """`sources`: an open ExternalSources to lend the AI agent; if None and PP_SOURCES=on, the
+    configured MCP servers are connected for this run. The offline analyser never uses them."""
     emit = emit or (lambda e: None)
     mode = _client_mode(client) if client is not None else settings.resolved_mode
     model = {"claude": settings.model, "groq": settings.groq_model}.get(mode, "offline-heuristic")
@@ -31,6 +34,7 @@ def analyze(regulation: Regulation, index: PolicyIndex, settings: Settings,
                     + ", ".join(r.id for r in regulation.requirements)))
 
     usage: dict[str, int] = {}
+    consulted: list[dict] = []
     if mode in ("claude", "groq"):
         # Imported lazily so each mode only needs its own SDK installed.
         if mode == "claude":
@@ -38,8 +42,16 @@ def analyze(regulation: Regulation, index: PolicyIndex, settings: Settings,
         else:
             from .agent.groq_agent import GroqAgent as Agent
 
-        agent = Agent(settings, index, emit, client=client)
-        summary, findings, stats = agent.run(regulation)
+        if sources is None and settings.sources == "on":
+            from .agent.external import open_sources
+
+            context = open_sources(settings, emit)
+        else:
+            context = nullcontext(sources)
+        with context as active:
+            agent = Agent(settings, index, emit, client=client, sources=active)
+            summary, findings, stats = agent.run(regulation)
+            consulted = list(active.consulted) if active is not None else []
         usage = agent.usage
     else:
         from .agent.offline import run_offline
@@ -49,7 +61,7 @@ def analyze(regulation: Regulation, index: PolicyIndex, settings: Settings,
     report = Report(
         run_id=run_id, regulation_id=regulation.id, regulation_title=regulation.title,
         mode=mode, model=model, summary=summary, findings=findings,
-        requirements=regulation.requirements, stats=stats, usage=usage,
+        requirements=regulation.requirements, stats=stats, usage=usage, external_sources=consulted,
     )
     save_report(report, settings)
     flagged = sum(1 for f in findings if not f.verified)

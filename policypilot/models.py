@@ -90,4 +90,6 @@ class Report(BaseModel):
     stats: VerificationStats = Field(default_factory=VerificationStats)
     usage: dict[str, int] = Field(default_factory=dict)
     decisions: dict[str, str] = Field(default_factory=dict)  # finding key -> "approved" | "rejected"
+    # every call the agent made to an external MCP source (PP_SOURCES=on), for the reviewer
+    external_sources: list[dict[str, Any]] = Field(default_factory=list)
     created_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat(timespec="seconds"))
