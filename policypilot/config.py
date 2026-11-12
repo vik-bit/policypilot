@@ -16,7 +16,8 @@ def _load_dotenv(path: Path) -> None:
     """Tiny `.env` reader (KEY=VALUE lines) so we don't need another dependency."""
     if not path.exists():
         return
-    for line in path.read_text(encoding="utf-8").splitlines():
+    # utf-8-sig: a byte-order mark would otherwise become part of the first key's name.
+    for line in path.read_text(encoding="utf-8-sig").splitlines():
         line = line.strip()
         if not line or line.startswith("#") or "=" not in line:
             continue

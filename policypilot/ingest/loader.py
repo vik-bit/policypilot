@@ -33,7 +33,9 @@ def read_text(path: Path) -> str:
         reader = PdfReader(str(path))
         return "\n".join(page.extract_text() or "" for page in reader.pages)
     if suffix in (".md", ".txt"):
-        return path.read_text(encoding="utf-8", errors="replace")
+        # utf-8-sig drops a byte-order mark ("UTF-8 with BOM" files from Windows Notepad), which
+        # would otherwise stop the "# Title" on the first line from being recognised.
+        return path.read_text(encoding="utf-8-sig", errors="replace")
     raise ValueError(f"Unsupported file type: {path.name} (supported: {', '.join(sorted(SUPPORTED))})")
 
 
