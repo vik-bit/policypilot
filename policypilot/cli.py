@@ -10,6 +10,7 @@
     serve               start the web app on http://localhost:8000
     mcp                 run as an MCP server for Claude Desktop, Claude Code or any MCP client
     mcp-bench           measure each MCP tool's latency over stdio (writes docs/MCP_RESULTS.md)
+    sources             list the external MCP sources the agent can consult (--fetch URL to try one)
 """
 
 from __future__ import annotations
@@ -49,6 +50,8 @@ def main(argv: list[str] | None = None) -> int:
     m.add_argument("--port", type=int, default=8765); m.add_argument("--host", default="127.0.0.1")
     mb = sub.add_parser("mcp-bench", help="measure MCP tool latency over stdio")
     mb.add_argument("--repeats", type=int, default=30)
+    so = sub.add_parser("sources", help="list the external MCP sources (PP_SOURCES) and their tools")
+    so.add_argument("--fetch", metavar="URL", help="fetch one page through the 'fetch' source, with its allowlist")
     args = p.parse_args(argv)
 
     settings = get_settings()
@@ -70,6 +73,28 @@ def main(argv: list[str] | None = None) -> int:
         if args.offline:
             os.environ["PP_PROVIDER"] = "offline"
         run_mcp(args.transport, args.host, args.port)  # stdout is the protocol channel: print nothing
+        return 0
+
+    if args.cmd == "sources":
+        from .agent.external import load_servers, open_sources
+
+        servers = load_servers(settings.sources_config)
+        where = settings.sources_config if settings.sources_config.exists() else "built-in default"
+        print(f"PP_SOURCES={settings.sources} · config: {where}")
+        with open_sources(settings, emit=lambda ev: print(f"  · {ev.message}")) as src:
+            for s in servers:
+                state = f"unavailable ({src.failed[s.name]})" if s.name in src.failed else "connected"
+                print(f"\n{s.name}: {state}\n  hosts: {', '.join(s.allowed_hosts or ['(no URLs)'])}")
+                for name, t in src.tools.items():
+                    if t.server is s:
+                        print(f"  tool {name}  (remote: {t.remote_name})")
+            if args.fetch:
+                if not src.has("fetch"):
+                    print("No 'fetch' tool is configured.")
+                    return 1
+                text, is_error = src.call("fetch", {"url": args.fetch})
+                print("\n" + text)
+                return 1 if is_error else 0
         return 0
 
     if args.cmd == "mcp-bench":

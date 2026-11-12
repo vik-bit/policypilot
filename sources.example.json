@@ -1,0 +1,50 @@
+{
+  "servers": [
+    {
+      "name": "fetch",
+      "tools": [
+        "fetch"
+      ],
+      "command": [
+        "{python}",
+        "-m",
+        "mcp_server_fetch",
+        "--no-readability-js"
+      ],
+      "allowed_hosts": [
+        "rbi.org.in",
+        "sebi.gov.in",
+        "cert-in.org.in",
+        "meity.gov.in",
+        "indiacode.nic.in",
+        "egazette.gov.in",
+        "npci.org.in",
+        "irdai.gov.in",
+        "dpdpa.gov.in",
+        "federalregister.gov",
+        "ecfr.gov",
+        "eur-lex.europa.eu",
+        "legislation.gov.uk"
+      ],
+      "description": "Open a page on an official regulator website and read it as Markdown. Use max_length and start_index to page.",
+      "fixed_arguments": {
+        "raw": true,
+        "max_length": 999999,
+        "start_index": 0
+      },
+      "html_to_text": true
+    },
+    {
+      "name": "legal-research",
+      "enabled": false,
+      "tools": [
+        "search_legal_research",
+        "get_source_text"
+      ],
+      "url": "https://example-legal-research.invalid/mcp",
+      "headers": {
+        "Authorization": "Bearer ${LEGAL_RESEARCH_TOKEN}"
+      }
+    }
+  ]
+}
