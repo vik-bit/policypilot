@@ -353,3 +353,22 @@ def test_paired_difference_and_report_tables():
 def test_holm_adjustment():
     assert lc.holm([0.01, 0.04]) == pytest.approx([0.02, 0.04])
     assert lc.holm([0.04, 0.01]) == pytest.approx([0.04, 0.02])
+
+
+def test_smoke_grid_runs_on_the_development_set_only(settings, tmp_path):
+    out = tmp_path / "smoke.jsonl"
+    lc.run_grid(settings, FakeModel(oracle), WordCounter(), Budget(window=10**6), out, lc.SMOKE_GRID,
+                suite=lc.SMOKE_SUITE, limit=lc.SMOKE_LIMIT, log=lambda *a: None)
+    rows = lc.load_rows(out)
+    assert len(rows) == 2 * lc.SMOKE_LIMIT and all(r["regulation"].startswith("reg-") for r in rows)
+
+
+def test_cli_context_table_without_a_model(settings, monkeypatch, capsys):
+    from policypilot.longctx import __main__ as cli
+    monkeypatch.setattr(cli, "get_settings", lambda: settings)
+    monkeypatch.setattr(cli, "make_counter", lambda model, strict=False: WordCounter())
+    monkeypatch.setattr(lc, "MAX_SIZE", 51)
+    monkeypatch.setattr(lc.context_table, "__defaults__", ((51,), "real"))
+    assert cli.main(["context"]) == 0
+    out = capsys.readouterr().out
+    assert "| 51 | full |" in out and "100%" in out

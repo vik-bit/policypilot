@@ -38,7 +38,10 @@ GRID: list[tuple[int, str, int]] = (
     + [(101, v, 1) for v in ("rag5", "hybrid50", "full", "bm25")]
     + [(MAX_SIZE, v, 3 if v in ("rag5", "full") else 1) for v in ALL_CONTEXT]
 )
+# A quick end-to-end check of the server and the code on the development (`sample`) set, so the
+# held-out `real` set is not touched until the main grid runs.
 SMOKE_GRID: list[tuple[int, str, int]] = [(51, "rag5", 1), (51, "full", 1)]
+SMOKE_SUITE, SMOKE_LIMIT = "sample", 5
 TEMPERATURE = 0.2
 
 
@@ -81,14 +84,15 @@ def load_rows(path: Path) -> list[dict]:
 
 
 def run_grid(settings: Settings, model, counter: TokenCounter, budget: Budget, out: Path,
-             grid: list[tuple[int, str, int]] = GRID, suite: str = "real", log=print) -> int:
+             grid: list[tuple[int, str, int]] = GRID, suite: str = "real", log=print,
+             limit: int | None = None) -> int:
     """Runs every (size, variant, run) not yet in the checkpoint. Returns the number of new rows."""
     if not counter.exact:
         raise RuntimeError("The evaluation needs the model's real tokenizer, not an estimate.")
     done = {_key(r) for r in load_rows(out)}
     out.parent.mkdir(parents=True, exist_ok=True)
     new = 0
-    requirements = list(labelled_requirements(settings, suite))
+    requirements = list(labelled_requirements(settings, suite))[:limit]
     for size in sorted({s for s, _, _ in grid}):
         library = None
         for _, variant, runs in [g for g in grid if g[0] == size]:
@@ -415,3 +419,26 @@ def max_fit_size(settings: Settings, counter: TokenCounter, budget: Budget, hi: 
         else:
             hi = mid - 1
     return n_policy + lo
+
+
+def context_table(settings: Settings, counter: TokenCounter, budget: Budget,
+                  sizes: tuple[int, ...] = (51, 101, MAX_SIZE), suite: str = "real") -> list[dict]:
+    """Per size and variant, without calling a model: how many prompt tokens each variant sends,
+    and what share of the labelled relevant clauses its context contains (context recall)."""
+    rows = []
+    requirements = list(labelled_requirements(settings, suite))
+    for size in sizes:
+        library = build_library(settings, size)
+        for variant in ("rag5", "hybrid50", "full"):
+            tokens, found, total, fits = [], 0, 0, 0
+            for reg, req, lab in requirements:
+                plan = build_context(variant, reg, req, library.index, counter, budget, library.order)
+                ids = {c.id for c in plan.clauses}
+                tokens.append(plan.prompt_tokens)
+                fits += plan.fits
+                found += sum(c in ids for c in lab["relevant"])
+                total += len(lab["relevant"])
+            rows.append({"size": library.size, "variant": variant, "prompt_tokens_mean": sum(tokens) / len(tokens),
+                         "prompt_tokens_max": max(tokens), "fits": fits, "requirements": len(requirements),
+                         "context_recall": found / total})
+    return rows

@@ -1,6 +1,7 @@
 """Command line for long-context mode: `python -m policypilot.longctx <command>`.
 
     tokens              prompt sizes per library size, and the largest library that fits (no model needed)
+    context             prompt tokens and context recall of rag5 / hybrid50 / full per size (no model needed)
     analyze <reg>       analyse one regulation with the whole library in context (falls back to search
                         when it does not fit)
     eval                run the pre-registered long context vs RAG grid on the `real` set (resumable)
@@ -37,10 +38,11 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--max-output", type=int, default=1_536, help="reply tokens reserved per call")
     sub = p.add_subparsers(dest="cmd", required=True)
     t = sub.add_parser("tokens"); t.add_argument("--distractors", type=int, nargs="*", default=[0, 50, 100])
+    sub.add_parser("context")
     a = sub.add_parser("analyze"); a.add_argument("regulation")
     a.add_argument("--variant", choices=VARIANTS, default="auto")
     e = sub.add_parser("eval"); e.add_argument("--grid", choices=("main", "smoke"), default="main")
-    e.add_argument("--out", type=Path, default=RUNS)
+    e.add_argument("--out", type=Path, help=f"checkpoint file (default {RUNS.name}, or smoke_runs.jsonl for --grid smoke)")
     r = sub.add_parser("report"); r.add_argument("--runs", type=Path, default=RUNS)
     args = p.parse_args(argv)
 
@@ -68,6 +70,17 @@ def main(argv: list[str] | None = None) -> int:
         print(f"Largest library whose full prompt fits for every requirement: {max_fit_size(settings, counter, budget)} clauses")
         return 0
 
+    if args.cmd == "context":
+        from ..eval.long_context import context_table
+
+        counter = make_counter(model.name, strict=True)
+        print("| Clauses | Context | Prompt tokens (mean / max) | Fits budget | Context recall |")
+        print("|---|---|---|---|---|")
+        for r in context_table(settings, counter, budget):
+            print(f"| {r['size']} | {r['variant']} | {r['prompt_tokens_mean']:,.0f} / {r['prompt_tokens_max']:,} "
+                  f"| {r['fits']}/{r['requirements']} | {100 * r['context_recall']:.0f}% |")
+        return 0
+
     if args.cmd == "analyze":
         from ..ingest import load_regulation
         from ..retrieval import PolicyIndex
@@ -88,9 +101,14 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.cmd == "eval":
         counter = make_counter(model.name, strict=True)
-        grid = lc.GRID if args.grid == "main" else lc.SMOKE_GRID
-        n = lc.run_grid(settings, model, counter, budget, args.out, grid)
-        print(f"{n} new rows in {args.out}")
+        if args.grid == "main":
+            out = args.out or RUNS
+            n = lc.run_grid(settings, model, counter, budget, out, lc.GRID)
+        else:
+            out = args.out or RUNS.with_name("smoke_runs.jsonl")
+            n = lc.run_grid(settings, model, counter, budget, out, lc.SMOKE_GRID, suite=lc.SMOKE_SUITE,
+                            limit=lc.SMOKE_LIMIT)
+        print(f"{n} new rows in {out}")
         return 0
     if args.cmd == "report":
         print(lc.report(settings, args.runs, budget.window))
