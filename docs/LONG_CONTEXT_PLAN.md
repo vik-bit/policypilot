@@ -82,7 +82,8 @@ mode the app uses. It is not scored separately: at every size in the grid it equ
 
 About 1,000 model calls. The grid is in `policypilot/eval/long_context.py` (`GRID`) and runs with
 `python -m policypilot.longctx eval`; it checkpoints every requirement so it can span several
-Kaggle sessions.
+Kaggle sessions. Before it, `--grid smoke` checks the server on 5 requirements of the `sample`
+(development) set, so a setup problem never costs a held-out run.
 
 ## Metrics
 
@@ -144,9 +145,11 @@ corrected). Runs 2 and 3 are reported to show stability, not tested.
   sensitivity, not a usable system.
 - The 32K window is the model's native one. Extending Qwen2.5 to 128K with YaRN is not part of the
   grid (its static scaling changes behaviour on short prompts, and a T4 is too slow at 100K tokens).
+  For reference, a 131,072-token window would hold a 744-clause library under the same budget rule.
 
 ## Change log
 
 | Date | Change | Reason |
 |---|---|---|
 | 26 Nov 2026 | First version | — |
+| 26 Nov 2026 | Named the smoke check (`sample` set, 5 requirements) and the 128K reference size | Clarification before any run; no metric, test or grid cell changed |
