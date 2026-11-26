@@ -151,7 +151,7 @@ mode (`policypilot/longctx/`) instead puts the **whole policy library in one pro
 model with a 32K-token window, each clause tagged with the same stable id search uses
 (`<clause id="data-privacy§3.2">`). Quotes are checked word for word by the same fact-checker, and
 failures go back to the model the same way. Everything runs on free compute: Qwen2.5-7B-Instruct
-(AWQ) on vLLM, on a free Kaggle T4 ([notebook](notebooks/long_context_kaggle.ipynb)), or any
+(AWQ) on vLLM, on a free Kaggle or Colab T4 ([Kaggle notebook](notebooks/long_context_kaggle.ipynb), [Colab notebook](https://colab.research.google.com/github/vik-bit/policypilot/blob/long-context/notebooks/long_context_colab.ipynb)), or any
 OpenAI-compatible server such as Ollama. No paid API.
 
 ```bash
@@ -457,7 +457,7 @@ policypilot/
 │       ├── long_context.py  ← long context vs RAG grid, paired tests, position test
 │       └── mcp_bench.py     ← MCP tool latency over stdio
 ├── data/                    ← policies and sample regulations (fictional), real regulation excerpts, labels
-├── notebooks/               ← free Kaggle T4 notebook for the long-context runs
+├── notebooks/               ← free Kaggle and Colab T4 notebooks for the long-context runs
 ├── docs/                    ← system design, eval plan and results, label review, glossary, screenshots
 └── tests/                   ← 89 tests, including both agent loops, injection checks, the MCP server driven by an MCP client, and external sources
 ```
