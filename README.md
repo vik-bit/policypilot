@@ -144,6 +144,83 @@ statistics and pass bars in advance.
   is now the default (`PP_RERANK=off`). It does cost one requirement on the 51-clause library
   (92% vs. 96%). The search and agent numbers above were measured with the old default.
 
+## Long context vs RAG
+
+PolicyPilot normally *retrieves*: it searches the library and reads a few clauses. Long-context
+mode (`policypilot/longctx/`) instead puts the **whole policy library in one prompt** for an open
+model with a 32K-token window, each clause tagged with the same stable id search uses
+(`<clause id="data-privacy§3.2">`). Quotes are checked word for word by the same fact-checker, and
+failures go back to the model the same way. Everything runs on free compute: Qwen2.5-7B-Instruct
+(4-bit) on Ollama, on a free Colab or Kaggle T4 ([Kaggle notebook](notebooks/long_context_kaggle.ipynb), [Colab notebook](https://colab.research.google.com/github/vik-bit/policypilot/blob/long-context/notebooks/long_context_colab.ipynb)), or any
+OpenAI-compatible server such as vLLM. No paid API.
+
+```bash
+python -m policypilot.longctx tokens                                   # prompt sizes, Qwen tokenizer, no model
+python -m policypilot.longctx analyze reg-01-data-protection           # needs a server on localhost:8000/v1
+python -m policypilot.longctx --base-url http://localhost:11434/v1 --model qwen2.5:7b-instruct analyze reg-01-data-protection
+```
+
+**Engineering.** Prompt tokens are counted with the model's own tokenizer, and the evaluation
+refuses to run on an estimate (some servers silently cut prompts that are too long). The budget
+keeps room for every fact-check retry, and `auto` mode falls back to hybrid search with the largest
+top-k that fits (50, 40, ... 5) when the library does not. The prompt is ordered system → library →
+requirement, so with a fixed library order every requirement shares the same prefix and the
+server's prefix cache (Ollama, vLLM) reads the library once. Before a run, the largest prompt is
+sent once with a fresh first line and the run stops if the server read less than all of it, since
+Ollama with its default context setting quietly drops the start of long prompts. 36 tests run the
+mode against a scripted fake model in CI.
+
+**Plan first.** The comparison was [pre-registered](docs/LONG_CONTEXT_PLAN.md) before any model
+call: the grid (8 ways of filling the context × library sizes 51, 101 and 184 clauses), the paired
+tests against RAG (paired bootstrap, exact McNemar), the lost-in-the-middle test (relevant clause
+moved to the start, middle or end; Holm-corrected McNemar), four hypotheses and the rule that turns
+the results into a recommendation. RAG here means the **same model and prompt** with only the
+hybrid top 5 in context, so the comparison isolates the context.
+
+**Measured so far: what each strategy puts in front of the model.** No model is involved here:
+this is the Qwen tokenizer and the real search index, on the 38 held-out requirements of the `real`
+set (draft labels). *Context recall* is the share of labelled relevant clauses that are in the
+prompt at all, which caps what the reader can find.
+
+| Library | Context | Prompt tokens per requirement (mean) | Context recall |
+|---|---|---|---|
+| 51 clauses | RAG: hybrid top 5 | 935 | 92% |
+| | Hybrid top 50 | 3,186 | 100% |
+| | Whole library | 4,055 | 100% |
+| 101 clauses | RAG: hybrid top 5 | 1,056 | 92% |
+| | Hybrid top 50 | 5,480 | 97% |
+| | Whole library | 11,421 | 100% |
+| 184 clauses (largest that fits 32K) | RAG: hybrid top 5 | 1,244 | 89% |
+| | Hybrid top 50 | 7,871 | 97% |
+| | Whole library | 27,029 | 100% |
+
+Two things follow before any model is run. First, RAG's ceiling is high: on this set top-5 search
+already holds 89–92% of the relevant clauses, so long context can only win on the remaining
+8–11%, and only if the 7B reader does not lose more to distraction than it gains. Second, the
+whole-library prompt grows 6.7× from 51 to 184 clauses while hybrid top 50 grows 2.5× and keeps
+97% context recall. A 32K window holds at most **184 clauses** under the budget (a 128K window would
+hold 744); a real company library is far larger, so there RAG is not one option among several but
+the only one.
+
+**Model results: run in progress.** The grid (about 1,000 calls, several hours) is running in the
+Colab notebook on a free T4, with Qwen2.5-7B served by Ollama; no scores are reported until it has
+finished and the report has been generated. When it has run,
+`python -m policypilot.longctx report` writes every table to `docs/LONG_CONTEXT_RESULTS.md`: recall,
+precision, impact accuracy, quote pass rate, latency, prompt tokens and prefix-cache share (where the server reports it) for
+every configuration, the paired differences against RAG, and the position-sensitivity result. This
+section will quote those numbers, whichever way they fall.
+
+**When to use which (current recommendation).**
+
+- **Library above the window** (more than ~184 clauses at 32K): RAG. Long context does not fit, and
+  `auto` falls back to search on its own.
+- **Library that fits:** the pre-registered rule decides: long context becomes the default only if
+  it beats RAG on recall (paired interval above 0) without losing on fully correct requirements.
+  Until the run, RAG stays the default: it is 4–22× cheaper in prompt tokens per requirement and
+  already sees about 90% of the relevant clauses.
+- **Worth trying first if RAG misses clauses:** hybrid top 50 in context. It closes most of the
+  context-recall gap at under a third of the whole library's tokens at 184 clauses.
+
 ---
 
 ## How it works
@@ -375,13 +452,16 @@ policypilot/
 │   ├── api/server.py        ← FastAPI: background jobs, search, uploads, decisions
 │   ├── mcp_server.py        ← the same tools over the Model Context Protocol
 │   ├── sessions.py          ← SQLite store for analyses MCP clients resume
+│   ├── longctx/             ← long-context mode: token budget, context variants, reader, fallback to search
 │   ├── web/                 ← UI (HTML/CSS/JS, no build step)
 │   └── eval/
 │       ├── run_eval.py      ← retrieval and end-to-end scoring for each test set
 │       ├── stats.py         ← bootstrap confidence intervals, McNemar test
 │       ├── scale.py         ← benchmark with 10,000 distractor clauses
+│       ├── long_context.py  ← long context vs RAG grid, paired tests, position test
 │       └── mcp_bench.py     ← MCP tool latency over stdio
 ├── data/                    ← policies and sample regulations (fictional), real regulation excerpts, labels
+├── notebooks/               ← free Kaggle and Colab T4 notebooks for the long-context runs
 ├── docs/                    ← system design, eval plan and results, label review, glossary, screenshots
 └── tests/                   ← 89 tests, including both agent loops, injection checks, the MCP server driven by an MCP client, and external sources
 ```
