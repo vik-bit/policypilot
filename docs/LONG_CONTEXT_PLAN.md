@@ -16,8 +16,10 @@ latency and tokens, and does it depend on where the relevant clause sits in the 
 
 To compare *context*, everything else is the same in every configuration:
 
-- **Reader:** `Qwen/Qwen2.5-7B-Instruct-AWQ` (4-bit AWQ of Qwen2.5-7B-Instruct, native 32,768-token
-  window), served by vLLM with prefix caching on, on a free Kaggle GPU (2 × T4). No paid API.
+- **Reader:** Qwen2.5-7B-Instruct, 4-bit (`qwen2.5:7b-instruct`, Q4_K_M GGUF), native 32,768-token
+  window, served by Ollama with `num_ctx 32768`, on one free T4 (Colab or Kaggle). No paid API.
+  Before each run the grid sends its largest prompt once and stops if the server read less than
+  all of it (Ollama silently drops the start of prompts longer than its context setting).
 - **Prompt:** the system prompt and JSON output format in `policypilot/longctx/prompts.py`; one
   call per requirement; clauses tagged with the same ids search uses.
 - **Fact-check loop:** the existing verifier, up to 2 retries (`PP_MAX_VERIFY_RETRIES`).
@@ -95,7 +97,9 @@ reply and after the fact-check loop. Added for this comparison:
   bound on what the reader can find; 100% for the full-library variants).
 - **Latency:** wall time per requirement, all calls included; p50 and p95.
 - **Prompt tokens per requirement** (as reported by the server, retries included) and the share
-  served from vLLM's prefix cache.
+  served from the server's prefix cache when the server reports it (vLLM does; Ollama reuses the
+  cached prefix but does not report it, so with Ollama this column reads "not reported" and the
+  cache shows only in latency).
 - **Cost per requirement:** GPU-seconds on the free T4 (= latency, one request at a time) and
   tokens. The dollar cost is zero; tokens are reported so any price list can be applied.
 - Requirements that did not fit, server errors, JSON parse failures, and findings left unverified.
@@ -153,3 +157,4 @@ corrected). Runs 2 and 3 are reported to show stability, not tested.
 |---|---|---|
 | 26 Nov 2026 | First version | — |
 | 26 Nov 2026 | Named the smoke check (`sample` set, 5 requirements) and the 128K reference size | Clarification before any run; no metric, test or grid cell changed |
+| 27 Nov 2026 | Server changed from vLLM (AWQ weights) to Ollama (Q4_K_M weights of the same model) on one T4; added the whole-prompt check before each run | vLLM 0.6.6, the last release known to run on a T4, cannot be installed on Colab's Python 3.13 (no matching torch build). Changed before any model call on any set; grid, metrics, tests and rules unchanged |

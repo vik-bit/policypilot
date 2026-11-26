@@ -151,8 +151,8 @@ mode (`policypilot/longctx/`) instead puts the **whole policy library in one pro
 model with a 32K-token window, each clause tagged with the same stable id search uses
 (`<clause id="data-privacy§3.2">`). Quotes are checked word for word by the same fact-checker, and
 failures go back to the model the same way. Everything runs on free compute: Qwen2.5-7B-Instruct
-(AWQ) on vLLM, on a free Kaggle or Colab T4 ([Kaggle notebook](notebooks/long_context_kaggle.ipynb), [Colab notebook](https://colab.research.google.com/github/vik-bit/policypilot/blob/long-context/notebooks/long_context_colab.ipynb)), or any
-OpenAI-compatible server such as Ollama. No paid API.
+(4-bit) on Ollama, on a free Colab or Kaggle T4 ([Kaggle notebook](notebooks/long_context_kaggle.ipynb), [Colab notebook](https://colab.research.google.com/github/vik-bit/policypilot/blob/long-context/notebooks/long_context_colab.ipynb)), or any
+OpenAI-compatible server such as vLLM. No paid API.
 
 ```bash
 python -m policypilot.longctx tokens                                   # prompt sizes, Qwen tokenizer, no model
@@ -164,8 +164,11 @@ python -m policypilot.longctx --base-url http://localhost:11434/v1 --model qwen2
 refuses to run on an estimate (some servers silently cut prompts that are too long). The budget
 keeps room for every fact-check retry, and `auto` mode falls back to hybrid search with the largest
 top-k that fits (50, 40, ... 5) when the library does not. The prompt is ordered system → library →
-requirement, so with a fixed library order every requirement shares the same prefix and vLLM's
-prefix cache reads the library once. 34 tests run the mode against a scripted fake model in CI.
+requirement, so with a fixed library order every requirement shares the same prefix and the
+server's prefix cache (Ollama, vLLM) reads the library once. Before a run, the largest prompt is
+sent once with a fresh first line and the run stops if the server read less than all of it, since
+Ollama with its default context setting quietly drops the start of long prompts. 36 tests run the
+mode against a scripted fake model in CI.
 
 **Plan first.** The comparison was [pre-registered](docs/LONG_CONTEXT_PLAN.md) before any model
 call: the grid (8 ways of filling the context × library sizes 51, 101 and 184 clauses), the paired
@@ -200,9 +203,9 @@ hold 744); a real company library is far larger, so there RAG is not one option 
 the only one.
 
 **Model results: not run yet.** The grid (about 1,000 calls on a T4, several hours) runs in the
-Kaggle notebook, which I could not execute from here: this machine has no GPU. When it has run,
+Colab or Kaggle notebook, which I could not execute from here: this machine has no GPU. When it has run,
 `python -m policypilot.longctx report` writes every table to `docs/LONG_CONTEXT_RESULTS.md`: recall,
-precision, impact accuracy, quote pass rate, latency, prompt tokens and prefix-cache share for
+precision, impact accuracy, quote pass rate, latency, prompt tokens and prefix-cache share (where the server reports it) for
 every configuration, the paired differences against RAG, and the position-sensitivity result. This
 section will quote those numbers, whichever way they fall.
 
