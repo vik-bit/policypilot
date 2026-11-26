@@ -38,6 +38,11 @@ class LLMError(RuntimeError):
     pass
 
 
+class PromptTruncated(RuntimeError):
+    """The server read fewer prompt tokens than were sent: its context is set smaller than the
+    budget (Ollama's default is a few thousand tokens) and it silently dropped part of the library."""
+
+
 @dataclass
 class OpenAICompatModel:
     base_url: str = field(default_factory=lambda: os.environ.get("PP_LC_BASE_URL", "http://localhost:8000/v1"))

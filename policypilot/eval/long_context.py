@@ -20,7 +20,7 @@ import numpy as np
 from ..config import PROJECT_ROOT, Settings
 from ..ingest import load_policies, load_regulations
 from ..longctx.context import POSITION_VARIANTS, Budget, build_context, interleave
-from ..longctx.llm import LLMError
+from ..longctx.llm import LLMError, PromptTruncated
 from ..longctx.reader import analyze_requirement
 from ..longctx.tokens import TokenCounter
 from ..retrieval import PolicyIndex
@@ -83,9 +83,25 @@ def load_rows(path: Path) -> list[dict]:
     return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
 
 
+def check_window(model, counter: TokenCounter, plan) -> int:
+    """Sends the largest prompt of the grid once, with a fresh line at the very start so no prefix
+    cache can serve it, and checks the server read all of it. Some servers (Ollama with its default
+    num_ctx) silently keep only the end of a prompt that is longer than their context setting, and
+    the model would then judge a library with clauses missing. Returns the tokens the server read."""
+    nonce = f"Request {time.time_ns()}.\n\n"
+    messages = [plan.messages[0], {**plan.messages[1], "content": nonce + plan.messages[1]["content"]}]
+    sent = plan.prompt_tokens + counter.count(nonce)
+    reply = model.chat(messages, 8, None)
+    if reply.prompt_tokens < 0.95 * sent - 64:
+        raise PromptTruncated(
+            f"The server read {reply.prompt_tokens:,} prompt tokens of the {sent:,} sent: its context window is "
+            "smaller than the budget. For Ollama, create the model with PARAMETER num_ctx 32768 (see the notebook).")
+    return reply.prompt_tokens
+
+
 def run_grid(settings: Settings, model, counter: TokenCounter, budget: Budget, out: Path,
              grid: list[tuple[int, str, int]] = GRID, suite: str = "real", log=print,
-             limit: int | None = None) -> int:
+             limit: int | None = None, check: bool = True) -> int:
     """Runs every (size, variant, run) not yet in the checkpoint. Returns the number of new rows."""
     if not counter.exact:
         raise RuntimeError("The evaluation needs the model's real tokenizer, not an estimate.")
@@ -93,6 +109,13 @@ def run_grid(settings: Settings, model, counter: TokenCounter, budget: Budget, o
     out.parent.mkdir(parents=True, exist_ok=True)
     new = 0
     requirements = list(labelled_requirements(settings, suite))[:limit]
+    if check:
+        size = max(s for s, _, _ in grid)
+        biggest = build_library(settings, size)
+        reg, req, _ = requirements[0]
+        plan = build_context("full", reg, req, biggest.index, counter, budget, biggest.order)
+        read = check_window(model, counter, plan)
+        log(f"Server read the whole {size}-clause prompt ({read:,} tokens): no truncation")
     for size in sorted({s for s, _, _ in grid}):
         library = None
         for _, variant, runs in [g for g in grid if g[0] == size]:
@@ -148,7 +171,7 @@ def _run_one(reg, req, lab, library: Library, variant: str, run: int, model, cou
         "final_total": r.final_total, "final_valid": r.final_valid,
         "unverified": sum(not f.verified for f in r.findings),
         "calls": r.calls, "prompt_tokens_sent": r.prompt_tokens, "completion_tokens": r.completion_tokens,
-        "cached_tokens": r.cached_tokens, "seconds": round(r.seconds, 2), "parse_failures": r.parse_failures,
+        "cached_tokens": r.cached_tokens, "first_prompt_tokens_reported": r.first_prompt_tokens, "seconds": round(r.seconds, 2), "parse_failures": r.parse_failures,
         "stopped": r.stopped,
     })
     return row
@@ -225,7 +248,9 @@ def summarise(rows: list[dict]) -> dict:
         "prompt_tokens_mean": sum(prompt) / len(prompt),
         "first_prompt_tokens_mean": sum(r["prompt_tokens_counted"] for r in sent) / len(sent),
         "completion_tokens_mean": sum(r["completion_tokens"] for r in sent) / len(sent),
-        "cached_share": sum(r["cached_tokens"] for r in sent) / max(sum(prompt), 1),
+        # None when the server does not report cached tokens (Ollama); vLLM does
+        "cached_share": (sum(r["cached_tokens"] for r in sent) / max(sum(prompt), 1)
+                         if any(r["cached_tokens"] for r in sent) else None),
         "calls_mean": sum(r["calls"] for r in sent) / len(sent),
         "context_clauses_mean": sum(r["context_clauses"] for r in sent) / len(sent),
         "context_recall": (sum(r["relevant_in_context"] for r in sent)
@@ -330,7 +355,7 @@ def write_markdown(results: dict, model: str, provisional: bool, window: int) ->
         lines.append(
             f"| {r['size']} | {NAMES[r['variant']]} | {r['run']} | {_ci(m['recall'])} | {_ci(m['precision'])} "
             f"| {_ci(m['impact_accuracy'])} | {_ci(m['fully_correct'])} | {q(r['quotes_first_pass'])} / {q(r['quotes_final'])} "
-            f"| {q(r['context_recall'])} | {r['prompt_tokens_mean']:,.0f} | {q(r['cached_share'])} "
+            f"| {q(r['context_recall'])} | {r['prompt_tokens_mean']:,.0f} | {'not reported' if r['cached_share'] is None else q(r['cached_share'])} "
             f"| {r['seconds_p50']:.0f} / {r['seconds_p95']:.0f} |")
     notes = [r for r in results["summary"] if r.get("did_not_fit") or r.get("errors") or r.get("unverified_findings")]
     if notes:

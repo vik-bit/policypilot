@@ -36,6 +36,8 @@ class RequirementResult:
     final_valid: int = 0
     calls: int = 0
     prompt_tokens: int = 0
+    # as the server counted the first prompt; Ollama leaves out tokens it served from its cache
+    first_prompt_tokens: int = 0
     completion_tokens: int = 0
     cached_tokens: int = 0
     seconds: float = 0.0
@@ -52,6 +54,8 @@ def analyze_requirement(regulation: Regulation, req: Requirement, plan: ContextP
     for attempt in range(budget.retries + 1):
         reply = model.chat(messages, budget.max_output, RESPONSE_SCHEMA)
         result.calls += 1
+        if attempt == 0:
+            result.first_prompt_tokens = reply.prompt_tokens
         result.prompt_tokens += reply.prompt_tokens
         result.completion_tokens += reply.completion_tokens
         result.cached_tokens += reply.cached_tokens

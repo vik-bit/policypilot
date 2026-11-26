@@ -36,8 +36,8 @@ class WordCounter:
 class FakeModel:
     """Replies from a script, in order; the last reply repeats. Records every request."""
 
-    def __init__(self, *replies, name="fake-qwen"):
-        self.replies, self.name, self.seen = list(replies), name, []
+    def __init__(self, *replies, name="fake-qwen", prompt_tokens=0):
+        self.replies, self.name, self.seen, self.prompt_tokens = list(replies), name, [], prompt_tokens
         self.temperature, self.seed = 0.0, None
 
     def chat(self, messages, max_tokens, schema=None):
@@ -45,7 +45,8 @@ class FakeModel:
         text = self.replies.pop(0) if len(self.replies) > 1 else self.replies[0]
         if callable(text):
             text = text(messages)
-        return Reply(text=text if isinstance(text, str) else json.dumps(text), prompt_tokens=1000,
+        # prompt_tokens=0: "not reported", so the truncation guard is skipped
+        return Reply(text=text if isinstance(text, str) else json.dumps(text), prompt_tokens=self.prompt_tokens,
                      completion_tokens=100, cached_tokens=600, finish_reason="stop", seconds=0.01)
 
 
@@ -297,7 +298,7 @@ def test_grid_is_resumable_and_skips_position_variants_without_labels(settings, 
     out = tmp_path / "runs.jsonl"
     grid = [(51, "rag5", 1), (51, "pos-end", 1)]
     model = FakeModel(oracle)
-    lc.run_grid(settings, model, WordCounter(), Budget(window=10**6), out, grid, log=lambda *a: None)
+    lc.run_grid(settings, model, WordCounter(), Budget(window=10**6), out, grid, log=lambda *a: None, check=False)
     rows = lc.load_rows(out)
     labels = lc.load_labels(settings, "real")
     applicable = sum(1 for lab in labels if lab["relevant"])
@@ -307,7 +308,7 @@ def test_grid_is_resumable_and_skips_position_variants_without_labels(settings, 
     pos = [r for r in rows if r["variant"] == "pos-end"]
     assert all(r["relevant_positions"][-1] == r["context_clauses"] - 1 for r in pos if len(r["relevant"]) == 1)
     calls = len(model.seen)
-    assert lc.run_grid(settings, model, WordCounter(), Budget(window=10**6), out, grid, log=lambda *a: None) == 0
+    assert lc.run_grid(settings, model, WordCounter(), Budget(window=10**6), out, grid, log=lambda *a: None, check=False) == 0
     assert len(model.seen) == calls  # nothing re-run
 
 
@@ -319,7 +320,7 @@ def test_grid_refuses_an_estimated_token_count(settings, tmp_path):
 def test_grid_records_prompts_that_do_not_fit_without_sending_them(settings, tmp_path):
     out = tmp_path / "runs.jsonl"
     model = FakeModel(oracle)
-    lc.run_grid(settings, model, WordCounter(), Budget(window=6_000), out, [(51, "full", 1)], log=lambda *a: None)
+    lc.run_grid(settings, model, WordCounter(), Budget(window=6_000), out, [(51, "full", 1)], log=lambda *a: None, check=False)
     rows = lc.load_rows(out)
     assert rows and not any(r["fits"] for r in rows) and model.seen == []
 
@@ -358,7 +359,7 @@ def test_holm_adjustment():
 def test_smoke_grid_runs_on_the_development_set_only(settings, tmp_path):
     out = tmp_path / "smoke.jsonl"
     lc.run_grid(settings, FakeModel(oracle), WordCounter(), Budget(window=10**6), out, lc.SMOKE_GRID,
-                suite=lc.SMOKE_SUITE, limit=lc.SMOKE_LIMIT, log=lambda *a: None)
+                suite=lc.SMOKE_SUITE, limit=lc.SMOKE_LIMIT, log=lambda *a: None, check=False)
     rows = lc.load_rows(out)
     assert len(rows) == 2 * lc.SMOKE_LIMIT and all(r["regulation"].startswith("reg-") for r in rows)
 
@@ -372,3 +373,18 @@ def test_cli_context_table_without_a_model(settings, monkeypatch, capsys):
     assert cli.main(["context"]) == 0
     out = capsys.readouterr().out
     assert "| 51 | full |" in out and "100%" in out
+
+
+def test_window_check_catches_a_server_that_cuts_the_prompt(settings, tmp_path):
+    from policypilot.longctx.llm import PromptTruncated
+    with pytest.raises(PromptTruncated, match="num_ctx"):
+        lc.run_grid(settings, FakeModel(oracle, prompt_tokens=2048), WordCounter(), Budget(window=10**6),
+                    tmp_path / "x.jsonl", [(51, "full", 1)], log=lambda *a: None, check=True)
+    assert not (tmp_path / "x.jsonl").exists()
+
+
+def test_window_check_passes_when_the_server_reads_everything(settings, index, reg01):
+    plan = _plan(index, reg01)
+    model = FakeModel({"findings": []}, prompt_tokens=plan.prompt_tokens + 5)
+    assert lc.check_window(model, WordCounter(), plan) == plan.prompt_tokens + 5
+    assert model.seen[0][1]["content"].startswith("Request ")  # a fresh prefix defeats the cache
