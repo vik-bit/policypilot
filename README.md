@@ -202,8 +202,9 @@ whole-library prompt grows 6.7× from 51 to 184 clauses while hybrid top 50 grow
 hold 744); a real company library is far larger, so there RAG is not one option among several but
 the only one.
 
-**Model results: not run yet.** The grid (about 1,000 calls on a T4, several hours) runs in the
-Colab or Kaggle notebook, which I could not execute from here: this machine has no GPU. When it has run,
+**Model results: run in progress.** The grid (about 1,000 calls, several hours) is running in the
+Colab notebook on a free T4, with Qwen2.5-7B served by Ollama; no scores are reported until it has
+finished and the report has been generated. When it has run,
 `python -m policypilot.longctx report` writes every table to `docs/LONG_CONTEXT_RESULTS.md`: recall,
 precision, impact accuracy, quote pass rate, latency, prompt tokens and prefix-cache share (where the server reports it) for
 every configuration, the paired differences against RAG, and the position-sensitivity result. This
