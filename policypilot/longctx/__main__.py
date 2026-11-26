@@ -42,7 +42,7 @@ def main(argv: list[str] | None = None) -> int:
     a = sub.add_parser("analyze"); a.add_argument("regulation")
     a.add_argument("--variant", choices=VARIANTS, default="auto")
     e = sub.add_parser("eval"); e.add_argument("--grid", choices=("main", "smoke"), default="main")
-    e.add_argument("--out", type=Path, help=f"checkpoint file (default {RUNS.name}, or smoke_runs.jsonl for --grid smoke)")
+    e.add_argument("--out", type=Path, help=f"checkpoint file (default {RUNS.name}, or data/runs/long_context_smoke.jsonl for --grid smoke)")
     r = sub.add_parser("report"); r.add_argument("--runs", type=Path, default=RUNS)
     args = p.parse_args(argv)
 
@@ -105,7 +105,7 @@ def main(argv: list[str] | None = None) -> int:
             out = args.out or RUNS
             n = lc.run_grid(settings, model, counter, budget, out, lc.GRID)
         else:
-            out = args.out or RUNS.with_name("smoke_runs.jsonl")
+            out = args.out or PROJECT_ROOT / "data" / "runs" / "long_context_smoke.jsonl"  # data/runs/ is git-ignored
             n = lc.run_grid(settings, model, counter, budget, out, lc.SMOKE_GRID, suite=lc.SMOKE_SUITE,
                             limit=lc.SMOKE_LIMIT)
         print(f"{n} new rows in {out}")

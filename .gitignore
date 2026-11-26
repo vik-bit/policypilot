@@ -9,4 +9,3 @@ data/mcp/
 sources.json
 *.egg-info/
 data/bench/
-data/eval/smoke_runs.jsonl
